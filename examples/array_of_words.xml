@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<definition>
+    <options rootname="words"/>
+    <variable name="word" type="word" dimension="1" length="10"/>
+    <variable name="real_value" tag="real" type="real" dimension="1"/>
+</definition>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<grid_example>
+   <general>
+      <A>1</A>
+      <B>2</B>
+      <C>2</C>
+   </general>
+   <grid>
+      <X>10</X>
+      <Y>20</Y>
+   </grid>
+   <grid_array>
+      <X>11</X>
+      <Y>22</Y>
+   </grid_array>
+   <grid_array>
+      <X>12</X>
+      <Y>23</Y>
+   </grid_array>
+   <grid_array>
+      <X>20</X>
+      <Y>23</Y>
+   </grid_array>
+</grid_example>

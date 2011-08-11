@@ -1,0 +1,96 @@
+TODO
+
+dd. 7 april 2008
+Most issues listed below have been solved.
+
+Major thing to do right now: finish the xsdconvert program
+
+
+dd. 12 june 2007
+- Document the shape= option
+
+dd. 5 march 2007
+Found a number of limitations to the parser generated via the
+xmlreader program:
++ Comments at the beginning (before the root element) are not
+  recognised as such
++ There is no message about the tag that was found
++ No indication of the line number at which an error occurred
+- Defining optional elements is tricky: defaults are not enough,
+  as there is no indication of what element was filled and
+  defining defaults for derived types is awkward (especially
+  if they contain derived types as fields)
+- There is no facility to create a proper deallocation routine or a
+  print/write routine at the moment.
++ If the element contains both attributes and data, the data are
+  lost
+
+Found one bug as well:
+- The placeholder facility causes incomplete reading routines.
+
+Solving these issues will require a new attribute and an update
+of the manual.
+
+(Issues with + have been solved)
+
+Hm, yet another problem: comment in the menu example.
+Solution:
+   Handle the complete comment element in that case
+
+dd. 26 february 2007
+- A checking facility can easily be built using
+  the xmlreader program. It would take the same
+  input as the xmlreader program but check that
+  all elements contain the proper subelements and
+  attributes.
+
+dd. 1 july 2006
+- Add a better checking facility - balanced open-close
+  elements.
+
+dd. 9 june 2006
+- Fix a bug regarding the well-formedness of <?xml ...?>
+  Done
+- Fix an oversight in the xmlreader program: there _must_ be
+  a root element
+  Done
+- Fix a bug regarding the number of data lines _after_ a
+  closing tag ... Or is that not a bug?
+
+dd. 5 june 2006
+Added this TODO file as an "official" list of things that are to done.
+
+The following functionality should be added:
+
+- In xmlreader: a facility for generating an appropriate writing
+  routine.
+
+- In xmlreader: the options globaltype and version number
+  and a small settings file to set certain parameters
+  separately from the definition of the data structure
+  (one parameter: to circumvent an apparent restriction of
+  certain compilers vis-a-vis dynamic string length)
+
+- More (realistic) examples
+
+- A more flexible way of storing the character data:
+  Allocated arrays and strings of arbitrary length.
+
+
+Limitations and bugs to be overcome:
+
+- In xmlreader: optional placeholder tags have not been
+  implemented yet
+  - Decided not to implement that feature. In retrospect
+  I see little use for this.
+
+- Not all aspects of XML are yet supported (CDATA and process
+  instructions for instance)
+
+- Writing XML files is not well-tested. Add an example
+  for this.
+
+
+Things that probably will never be done:
+
+- XSLT, XPath and the like.

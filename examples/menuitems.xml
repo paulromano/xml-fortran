@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<menus>
+<menubar>
+   <comment>
+   This is an example of a more elaborate XML file:
+   It defines a menubar - nothing very realistic, mind you,
+   but it shows that the xmlreader program can handle fairly
+   complex structures
+   </comment>
+   <name>General</name>
+   <number> 1 2 3
+          4 5 6</number> <!-- excess numbers ignored! -->
+   <menu>
+      <name>File</name>
+      <item type="item" name="Open ..."/>
+      <item>
+         <type>separator</type>
+         <name>---</name>
+      </item>
+      <item type="item" name="Exit">
+         This item stops the program
+      </item>
+   </menu>
+   <menu>
+      <name>Edit</name>
+      <item>
+         <type>item</type>
+         <name>Undo</name>
+      </item>
+      <item>
+         <type>item</type>
+         <name>Redo</name>
+      </item>
+      <item>
+         <type>submenu</type>
+         <name>Search</name>
+         <submenu>
+            <item>Find ...</item>
+         </submenu>
+      </item>
+   </menu>
+</menubar>
+</menus>

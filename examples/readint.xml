@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<integers>
+<options rootname="integers"/>
+<comment>
+Read a couple of integers
+</comment>
+<variable name="x" type="integer" default="1" />
+<variable name="y" type="integer" default="2" />
+<variable name="z" type="integer" default="2" />
+<variable name="w" type="integer-array" />
+</integers>

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<menudefinition>
+<comment>
+This file defines a fairly elaborate data structure:
+A menubar that contains menus. Each menu contains several
+items and an item can hold a submenu. Submenu only contain
+items.
+</comment>
+
+<comment>
+Hm, optional components of a derived type ... How to treat these?
+Simple: default="submenu_t('', '')", as the value will be
+written on the right-hand side of the assignment
+
+Note:
+When I added an array of items, I wanted to set the submenu
+default to:
+   default="submenu_t('','',subitem_t('',''))"
+The resulting code made two compilers complain in a nasty
+way. Apparently you can not nest constructors this way.
+(And the subitem is a pointer to an array ... this
+will require a more subtle approach!)
+
+TODO: add a keyword "optional"
+
+To save the data:
+#typedef name="subitem_t"#
+   #component name="type" type="line" length="20"##/component#
+   #component name="name" type="line" length="20"##/component#
+#/typedef#
+In submenu:
+   #component name="item" type="submenu_t" dimension="1"##/component#
+</comment>
+
+<!-- Change the expected name of the root element -->
+<options rootname="menus"/>
+
+<typedef name="submenu_t">
+   <component name="item" type="line" length="10"></component>
+</typedef>
+<typedef name="item_t">
+   <component name="type" type="line" length="20"></component>
+   <component name="name" type="line" length="20"></component>
+   <component name="submenu" type="submenu_t" default="submenu_t('')"></component>
+   <component name="data" type="line" default="'?'"></component>
+</typedef>
+<typedef name="menu_t">
+   <component name="name" type="line" length="20"></component>
+   <component name="item" type="item_t" dimension="1"></component>
+</typedef>
+<typedef name="menubar_t">
+   <component name="name" type="line" length="20"></component>
+   <component name="menu" type="menu_t" dimension="1"></component>
+   <component name="number" type="word" length="10" shape="2,3"></component>
+</typedef>
+<comment>
+Now the variables themselves ... just a single menubar
+</comment>
+<variable name="menubar" type="menubar_t"></variable>
+<variable name="just_a_value" type="integer" default="23"></variable>
+<variable name="string_array" type="word" length="10" shape="5,7"></variable>
+<variable name="int_array" type="integer" shape="7"></variable>
+</menudefinition>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<grid_example>
+   <comment>
+   Read a couple of integers and a derived type
+   </comment>
+   <grid><X>10</X><Y>20</Y>
+   </grid>
+   <general>
+      <A>1</A>
+      <B>2</B>
+      <C>2</C>
+   </general>
+   <grid_array><X>11</X><Y>22</Y></grid_array>
+   <grid_array><X>12</X><Y>23</Y></grid_array>
+   <grid_array><Y>23</Y></grid_array>
+</grid_example>

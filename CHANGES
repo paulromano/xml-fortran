@@ -1,0 +1,207 @@
+Changes wrt previous versions:
+------------------------------
+
+dd. 7 april 2008
+Corrected support for writing the data - the placeholder problem
+has been solved.
+This is now version 1.00
+
+dd. 27 december 2007
+Added support for writing the data to an XML file in
+xmlreader.f90 (the program now generates a routine write_xml_* as well
+that writes a file with the same structure as the routine read_xl_*
+reads). There is one problem left: if the definition contains
+"placeholders", the code is not written in the correct order.
+
+dd. 7 december 2007
+Added new predefined types, so that a specification like:
+
+<?xml version="1.0"?>
+<definition>
+    <options rootname="words"/>
+    <variable name="word" type="word" dimension="1"/>
+</definition>
+
+works as well (for all primitive types)
+
+Added the start of a program to convert XSD-files.
+
+dd. 25 june 2007
+Adjusted the xmlreader program to properly accept smaller arrays
+for fixed shape variables.
+
+dd. 19 june 2007
+Corrected a mistake with character variables with fixed shape.
+Allow larger arrays than according to shape
+
+dd. 17 june 2007
+Updated the documentation, prepared release of version 0.97
+
+dd. 12 june 2007
+Added support for arrays of fixed "shape" (see
+the menuitems example)
+
+Fixed a bug with handling the default values for variables
+(the code ended up in the wrong place)
+
+dd 10. june 2007
+Added routines to write basic data to an XML file.
+(Start of implementation of generating export routines
+in the xmlreader program)
+
+Corrected bug in xmlreader program (had to do with
+whitespace that interfered with the processing in the
+generated reader code)
+
+NOTE: Still need to check that this solves the
+problem entirely!
+
+Applied patch by Davide Cesari: array of strings and
+initialising pointer components.
+
+dd 26. february 2007
+Fixed a bug in the xmlreader program wrt reading
+attributes as data (self-contained elements were
+sometimes skipped - i.e. <element data="xxx"/>
+was not treated properly in all cases)
+
+dd 1. july 2006
+Corrected the initialisation of the array "entities"
+- the strings must all be the same length (not
+all compilers will complain about it though).
+
+And some corrections by Jacques Germishuizen for the
+examples.
+
+dd. 26 june 2006
+Fixed a few bugs pointed out by
+Jacques Germishuizen (rootname, double precision
+variables)
+
+dd. 16 june 2006
+Added a small configuration file to the
+xmlreader program - some global settings and
+a way to work around a limitation in some
+compilers.
+Also added a facility whereby attribute
+values are treated as data for a subelement:
+In the menu example (tst_menu.f90, menu.xml,
+menuitems.xml) the following fragments are
+equivalent:
+
+<item type="item" name="Open ..."/>
+
+and
+
+<item>
+   <type>item</type>
+   <name>Open ...</name>
+</item>
+
+dd. 9 june 2006
+Corrected a severe misunderstanding about XML -
+the requirement that there is a root element
+This has now been built into the xmlreader
+program.
+Some refinements to xmlparse.f90 (extra check
+on <?xml ...?> elements) and added proper
+comments.
+
+dd. 5 june 2006
+Added two examples
+Added subroutine xml_process
+Updated the documentation
+Corrected bugs in xmlreader.f90
+
+dd. 30 may 2006
+Added TODO file to the project
+Added support for "strict" parsing of the
+XML file via the generated reader routine.
+
+dd. 28 may 2006
+Solved a problem with place holder tags
+(anything after the closing tag was
+ignored)
+
+dd. 17 may 2006
+Corrected a few glitches in xmlreader.f90 -
+The code generated for place holder tags
+was incorrect.
+
+Note: There is still a bug which appears
+in example tst_grid. With the tag "general"
+in place, the gridarray tags are not seen:
+
+<?xml version="1.0">
+<comment>
+Read a couple of integers and a derived type
+</comment>
+<grid><X>10</X><Y>20</Y>
+</grid>
+<general>
+   <A>1</A>
+   <B>2</B>
+   <C>2</C>
+</general>
+<grid_array><X>11</X><Y>22</Y></grid_array>
+<grid_array><X>12</X><Y>23</Y></grid_array>
+<grid_array><Y>23</Y></grid_array>
+
+Maybe an ordering/loop problem?
+
+dd. 7 february 2006
+Corrected a stupid mistake in xmlreader.f90 -
+the spurious error message is gone
+
+dd. 6 february 2006
+Added placeholders to the xmlreader utility. More
+thorough tests required: the generated source code is
+composed of several pieces, the ordering can be
+wrong when the XML file is ordered differently.
+
+Note:
+The generated code is not tested yet. It looks okay,
+but that is all.
+
+dd. 24 january 2006
+Extended the xmlreader utility with new features.
+(mostly support for default values)
+
+
+dd. 19 october 2005
+Added support for "entities" (like an ampersand) in
+character data.
+
+Expanded the capabilities of the xmlreader program
+with arrays of primitives and derived types.
+
+Updated the project documents at http://xml-fortran.sf.net
+
+
+dd. 3 october 2005
+Integrated a patch by cinonet with the file xmlparse.f90.
+
+Updated the documentation with information on the xmlreader
+program.
+
+New version of the test program (more flexible) for the
+parser. Not finished yet.
+
+New version of the xmlreader program - added support for
+derived types.
+
+
+dd. 29 september 2005
+Added two articles on the use of XML in Fortran that appeared in
+the Fortran Forum.
+
+Updated the project page - new information on available libraries among
+other things.
+
+Added new code:
+- tree_struct.f90 and tree_find.f90:
+  Module for manipulating general tree structures
+
+- read_xml_prims.f90 and test_read_prims.f90
+  Code to read (integer) data returned from xml_get.
+  Will be part of a new approach to dealing with XML files

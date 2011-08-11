@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<chapter id="simple">
+  <title>Simple Use of PLplot</title>
+
+  <sect1 id="simple-graph">
+    <title>Plotting a Simple Graph</title>
+
+    <para>
+      We shall first consider plotting simple graphs showing the dependence
+      of one variable upon another.  Such a graph may be composed of
+      several elements:
+    </para>
+    <itemizedlist>
+      <listitem>
+	<para>
+	  A box which defines the ranges of the variables, perhaps with
+	  axes and numeric labels along its edges.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  A set of points or lines within the box showing the functional
+	  dependence.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  A set of labels for the variables and a title for the graph.
+	</para>
+      </listitem>
+    </itemizedlist>
+    <para>
+      In order to draw such a graph, it is necessary to call at least four
+      of the PLplot functions:
+    </para>
+
+    <orderedlist>
+      <listitem>
+	<para>
+	  &#38;plinit;, to initialize PLplot.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  &#38;plenv;, to define the range and scale of the
+	  graph, and draw labels, axes, etc.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  One or more calls to &#38;plline; or &#38;plpoin; to draw lines or points
+	  as needed.  Other more complex routines include &#38;plbin; and
+	  &#38;plhist; to draw histograms, &#38;plerrx; and &#38;plerry; to draw
+	  error-bars.
+	</para>
+      </listitem>
+      <listitem>
+	<para>
+	  &#38;plend;, to close the plot.
+	</para>
+      </listitem>
+    </orderedlist>
+
+    <para>
+      More than one graph can be drawn on a single set of axes by making
+      repeated calls to the routines listed in item 3 above.  PLplot only
+      needs to be initialized once unless plotting to multiple output
+      devices.
+    </para>
+
+  </sect1>
+</chapter>

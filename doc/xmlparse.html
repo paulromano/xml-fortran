@@ -1,0 +1,820 @@
+<html><head>
+<title>XMLPARSE - XML </title>
+</head>
+<! -- Generated from file 'xmlparse.man' by tcllib/doctools with format 'html'
+   -->
+<! -- CVS: $Id$ XMLPARSE.n
+   -->
+
+<body>
+<h1> XMLPARSE(n) 0.9  &quot;XML&quot;</h1>
+<h2><a name="name">NAME</a></h2>
+<p>
+<p> XMLPARSE - Parser for XML files in Fortran
+
+
+<h2><a name="table_of_contents">TABLE OF CONTENTS</a></h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#table_of_contents">TABLE OF CONTENTS</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#synopsis">SYNOPSIS</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#description">DESCRIPTION</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#procedures">PROCEDURES</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#motivation">MOTIVATION</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#parameters_and_derived_types">PARAMETERS AND DERIVED TYPES</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#generating_a_reading_routine">GENERATING A READING ROUTINE</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#examples">EXAMPLES</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#limitations">LIMITATIONS</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#release_notes">RELEASE NOTES</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#to_do">TO DO</a><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#keywords">KEYWORDS</a><br>
+<h2><a name="synopsis">SYNOPSIS</a></h2>
+<p>
+<table border=1 width=100% cellspacing=0 cellpadding=0><tr            bgcolor=lightyellow><td bgcolor=lightyellow><table 0 width=100% cellspacing=0 cellpadding=0><tr valign=top ><td ><a href="#1"><b class='cmd'>subroutine xml_open(</b> <i class='arg'>info</i>, <i class='arg'>filename</i>, <i class='arg'>mustread</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#2"><b class='cmd'>subroutine xml_close(</b> <i class='arg'>info</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#3"><b class='cmd'>subroutine xml_options(</b> <i class='arg'>info</i>, ... )</a></td></tr>
+<tr valign=top ><td ><a href="#4"><b class='cmd'>subroutine xml_get(</b> <i class='arg'>info</i>, <i class='arg'>tag</i>, <i class='arg'>endtag</i>, <i class='arg'>attribs</i>, <i class='arg'>no_attribs</i>, <i class='arg'>data</i>, <i class='arg'>no_data</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#5"><b class='cmd'>subroutine xml_put(</b> <i class='arg'>info</i>, <i class='arg'>tag</i>, <i class='arg'>attribs</i>, <i class='arg'>no_attribs</i>, <i class='arg'>data</i>, <i class='arg'>no_data</i>, <i class='arg'>type</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#6"><b class='cmd'>logical function xml_ok(</b> <i class='arg'>info</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#7"><b class='cmd'>logical function xml_error(</b> <i class='arg'>info</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#8"><b class='cmd'>logical function xml_data_trunc(</b> <i class='arg'>info</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#9"><b class='cmd'>integer function xml_find_attrib(</b> <i class='arg'>attribs</i>, <i class='arg'>no_attribs</i>, <i class='arg'>name</i>, <i class='arg'>value</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#10"><b class='cmd'>subroutine read_xml_file_xxx(</b> <i class='arg'>filename</i>, <i class='arg'>lurep</i>, <i class='arg'>error</i> )</a></td></tr>
+<tr valign=top ><td ><a href="#11"><b class='cmd'>subroutine xml_process(</b> <i class='arg'>filename</i>, <i class='arg'>attribs</i>, <i class='arg'>data</i>, <i class='arg'>startfunc</i>, <i class='arg'>datafunc</i>, <i class='arg'>endfunc</i>, <i class='arg'>lurep</i>, <i class='arg'>error</i> )</a></td></tr>
+</table></td></tr></table>
+<h2><a name="description">DESCRIPTION</a></h2>
+<p>
+The XML parser provided by this module has been written entirely in
+Fortran, making it possible to read and write XML files without the need
+to use mixed-language programming techniques.
+<p>
+It should be noted that the implementation has a number of limitations
+(cf. the section Limitations). The module has the following features:
+
+<ul>
+<li>
+Reading an XML-file (within certain limitations) in a stream-oriented
+manner.
+
+<br><br>
+<li>
+Writing an XML-file in a stream-oriented manner.
+
+<br><br>
+<li>
+Creating a reading routine that will fill a data structure. The data
+structure is described via an XML file and all necessary code to read
+files that conform to that structure is generated.
+
+</ul>
+
+<p>
+The module has been implemented in standard Fortran 90. It is the
+intention to make it compilable by the F compiler as well, so that
+it can be used in conjunction to a wide set of Fortran compilers.
+<p>
+(It should even be possible to convert the parsing routines to an
+equivalent library in FORTRAN 77, though with the availability of
+several free Fortran 95 compilers, there seems little need for that.)
+
+<h2><a name="procedures">PROCEDURES</a></h2>
+<p>
+The module defines the following public routines and functions:
+<dl>
+
+<dt><a name="1"><b class='cmd'>subroutine xml_open(</b> <i class='arg'>info</i>, <i class='arg'>filename</i>, <i class='arg'>mustread</i> )</a><dd>
+
+Open an XML-file and fill the structure <em>info</em>, so that it can be
+used to refer to the opened file.
+<br><br>
+To check if all is well, (errors could be: the file can not be opened
+for some reason), the function xml_error() is available.
+<br><br>
+Arguments:
+<br><br>
+<dl>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+<i class='arg'>filename</i> - CHARACTER(LEN=*) name of the file to be opened
+<br><br>
+<i class='arg'>mustread</i> - LOGICAL whether to read the file or to write to it
+</dl>
+<br><br>
+
+<dt><a name="2"><b class='cmd'>subroutine xml_close(</b> <i class='arg'>info</i> )</a><dd>
+
+Close an opened XML-file. If the file was not opened, this routine has
+no effect.
+<br><br>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+
+<br><br>
+<dt><a name="3"><b class='cmd'>subroutine xml_options(</b> <i class='arg'>info</i>, ... )</a><dd>
+
+Set one or more options. These are all defined as optional arguments, so
+that the <em>name=value</em> convention can be used to select an option
+and to set its value. The first argument is fixed:
+<br><br>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+All other arguments are optional and include:
+<br><br>
+<br><br>
+<dl>
+<i class='arg'>ignore_whitespace</i> - LOGICAL compress the array of strings (remove
+empty lines and remove leading blanks) for easier processing
+<br><br>
+<i class='arg'>no_data_truncation</i> - LOGICAL if data truncation occurs (too many
+lines of data or too many attributes, so that they can not all be stored
+in the arrays), this can be marked as an error or not. If the option is
+set to <em>true</em>, it is considered an error.
+<br><br>
+<i class='arg'>report_lun</i> - INTEGER LU-number of a file to which messages can be
+logged (use XML_STDOUT for output to screen)
+<br><br>
+<i class='arg'>report_errors</i> - LOGICAL write error messages to the report
+<br><br>
+<i class='arg'>report_details</i> - LOGICAL write detailed messages to the report,
+useful for debugging
+</dl>
+<br><br>
+Note that these options are off by default. They should be set
+after the file has been opened. The reporting options can be set before
+an XML file has been opened, they hold globally (that is, they are in
+effect for all reading and writing, independent of the files).
+<br><br>
+
+<br><br>
+<dt><a name="4"><b class='cmd'>subroutine xml_get(</b> <i class='arg'>info</i>, <i class='arg'>tag</i>, <i class='arg'>endtag</i>, <i class='arg'>attribs</i>, <i class='arg'>no_attribs</i>, <i class='arg'>data</i>, <i class='arg'>no_data</i> )</a><dd>
+
+Read the current tag in the file up to the next one or the end-of-file.
+Store the attributes in the given array and do the same for the
+character data that may be present after the tag.
+<br><br>
+<dl>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+<i class='arg'>tag</i> - CHARACTER(LEN=*) string that will hold the tag's name
+<br><br>
+<i class='arg'>endtag</i> - LOGICAL indicates whether the current tag has ended or
+not
+<br><br>
+<i class='arg'>attribs</i> - CHARACTER(LEN=*), DIMENSION(:,:) array of strings that
+will hold the attributes given to the tag
+<br><br>
+<i class='arg'>no_attribs</i> - INTEGER number of attributes that were found
+<br><br>
+<i class='arg'>data</i> - CHARACTER(LEN=*), DIMENSION(:) array of strings that
+will hold the character data (one element per line)
+<br><br>
+<i class='arg'>no_data</i> - INTEGER number of lines of character data
+</dl>
+Note:
+<br><br>
+If an error occurs or end-of-file is found, then use the functions
+<em>xml_ok()</em> and <em>xml_error()</em> to find out the conditions.
+<br><br>
+
+<br><br>
+<dt><a name="5"><b class='cmd'>subroutine xml_put(</b> <i class='arg'>info</i>, <i class='arg'>tag</i>, <i class='arg'>attribs</i>, <i class='arg'>no_attribs</i>, <i class='arg'>data</i>, <i class='arg'>no_data</i>, <i class='arg'>type</i> )</a><dd>
+
+Write the information for the current tag to the file. This subroutine
+is the inverse, so to speak, of the subroutine <em>xml_get</em> that
+parses the XML input.
+<br><br>
+For a description of the arguments, other than <em>type</em>: see above.
+<br><br>
+<i class='arg'>type</i> - CHARACTER(LEN=*) string having one the following values:
+<br><br>
+<ul>
+<li>
+'open' - Write an opening tag with attributes and data (if there
+are any). Useful for creating a hierarchy of tags.
+<br><br>
+<li>
+'close' - Write a closing tag
+<br><br>
+<li>
+'elem' - Write the element data
+</ul>
+<br><br>
+
+<dt><a name="6"><b class='cmd'>logical function xml_ok(</b> <i class='arg'>info</i> )</a><dd>
+
+Returns whether the parser is still okay (no read errors or
+end-of-file).
+<br><br>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+
+<br><br>
+<dt><a name="7"><b class='cmd'>logical function xml_error(</b> <i class='arg'>info</i> )</a><dd>
+
+Returns whether the parser has encountered some error (see also the
+options).
+<br><br>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+
+<br><br>
+<dt><a name="8"><b class='cmd'>logical function xml_data_trunc(</b> <i class='arg'>info</i> )</a><dd>
+
+Returns whether the parser has had to truncate the data or the
+attributes.
+<br><br>
+<i class='arg'>info</i> - TYPE(XML_PARSE) structure used to identify the file
+<br><br>
+
+<br><br>
+<dt><a name="9"><b class='cmd'>integer function xml_find_attrib(</b> <i class='arg'>attribs</i>, <i class='arg'>no_attribs</i>, <i class='arg'>name</i>, <i class='arg'>value</i> )</a><dd>
+
+Convenience function that searches the list of attributes and returns
+the index of the sought attribute in the array or -1 if not present.
+In that case the argument <em>value</em> is not set, so that you can use
+this to supply a default.
+<br><br>
+<dl>
+<i class='arg'>attribs</i> - CHARACTER(LEN=*), DIMENSION(:,:) array of strings that
+hold the attributes
+<br><br>
+<i class='arg'>no_attribs</i> - INTEGER number of attributes that was found
+<br><br>
+<i class='arg'>name</i> - CHARACTER(LEN=*) name of the attribute to be found
+<br><br>
+<i class='arg'>value</i> - CHARACTER(LEN=*) actual or default value of the attribute
+upon return
+</dl>
+
+<dt><a name="10"><b class='cmd'>subroutine read_xml_file_xxx(</b> <i class='arg'>filename</i>, <i class='arg'>lurep</i>, <i class='arg'>error</i> )</a><dd>
+
+Subroutine generated via the method described below to read an XML
+file of a particular structure.
+<br><br>
+<dl>
+<i class='arg'>filename</i> - CHARACTER(LEN=*) name of the XML file to read
+<br><br>
+<i class='arg'>lurep</i> - INTEGER LU-number to use for reporting errors (use 0 to
+write to the screen; optional)
+<br><br>
+<i class='arg'>error</i> - LOGICAL variable that indicates if an error occurred
+while reading (optional).
+</dl>
+
+<dt><a name="11"><b class='cmd'>subroutine xml_process(</b> <i class='arg'>filename</i>, <i class='arg'>attribs</i>, <i class='arg'>data</i>, <i class='arg'>startfunc</i>, <i class='arg'>datafunc</i>, <i class='arg'>endfunc</i>, <i class='arg'>lurep</i>, <i class='arg'>error</i> )</a><dd>
+
+Subroutine that reads the XML file and calls three user-defined
+subroutines to take care of the actual processing. This is a
+routine that implements the so-called SAX approach.
+<br><br>
+<dl>
+<i class='arg'>filename</i> - CHARACTER(LEN=*) name of the XML file to read
+<br><br>
+<i class='arg'>attribs</i> - CHARACTER(LEN=*), DIMENSION(:,:) work array to store the
+attributes
+<br><br>
+<i class='arg'>data</i> - CHARACTER(LEN=*), DIMENSION(:) work array to store the
+character data associated with a tag
+<br><br>
+
+<i class='arg'>startfunc</i> - Subroutine that is called to handle the <em>start</em>
+of a tag:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    subroutine startfunc( tag, attribs, error )
+       character(len=*)                 :: tag
+       character(len=*), dimension(:,:) :: attribs
+       logical                          :: error
+</pre></td></tr></table></p>
+<br><br>
+If the argument error is set to true (because the tag was unexpected or
+something similar), the reading is interrupted and the routine returns.
+Only the fact that something was wrong is recorded. You need to use
+other means to convey more information if that is needed.
+
+<br><br>
+<i class='arg'>datafunc</i> - Subroutine that is called to handle the <em>character data</em>
+associated with a tag:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    subroutine datafunc( tag, attribs, error )
+       character(len=*)               :: tag
+       character(len=*), dimension(:) :: data
+       logical                        :: error
+</pre></td></tr></table></p>
+<br><br>
+
+<i class='arg'>endfunc</i> - Subroutine that is called to handle the <em>end</em>
+of a tag:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    subroutine endfunc( tag, error )
+       character(len=*)               :: tag
+       logical                        :: error
+</pre></td></tr></table></p>
+<br><br>
+<i class='arg'>lurep</i> - INTEGER LU-number to use for reporting errors (use 0 to
+write to the screen; optional)
+<br><br>
+<i class='arg'>error</i> - LOGICAL variable that indicates if an error occurred
+while reading (optional).
+</dl>
+
+</dl>
+
+<h2><a name="motivation">MOTIVATION</a></h2>
+<p>
+The use of XML-files as a means to store data and more importantly to
+transfer data between very disparate applications and organisations has
+been growing these last few years. Standard implementations of libraries
+that deal with all features of XML or a significant part of them are
+available in many languages, but as far as we know there was no
+implementation in Fortran.
+<p>
+One could of course use, say, the well-known Expat library by ... and
+provide a Fortran interface, but this is slightly awkward as it forces
+one to have a compatible C compiler. More importantly, this introduces
+platform-dependencies because the interfacing between Fortran and C
+depends strongly on the used compilers and this introduces a way of
+working that is alien to Fortran programmers: Expat requires the
+programmer to register a callback function, to be called when some
+&quot;event&quot; occurs while reading the file (a begin tag is found, character
+data are found and so on).
+<p>
+The alternative is even more awkward: build a tree of tags and
+associated data and ask for these data. To a Fortran programmer, one of
+the first things they will want to do with an XML-file is to get all the
+information out - so a stream-oriented parsing method is more
+appropriate.
+<p>
+Among the two predominant types of XML-parsing, SAX or stream-oriented
+parsing and DOM or object-oriented parsing, the stream-oriented approach
+is more suitable to the frame of mind of the average Fortran programmer.
+But instead of registering callbacks, this module uses the method known
+from, for instance, GNU's getopt() function: parse the data and return
+to the caller to have it process the information. The caller calls the
+function again and again, letting getopt() take care of the details.
+<p>
+This is exactly the approach taken by the <em>xmlparse</em> module:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+    call xml_open(info, ... )
+
+    do while ( xml_ok(info) )
+       call xml_get(info, ... ) ! Get the first/next tag
+       ... identify the tag (via xml_check_tag for instance)
+       ... process the information
+    enddo
+
+    call xml_close(info)
+
+    ... proceed with the rest of the program
+</pre></td></tr></table></p>
+
+<p>
+For convenience, the module does supply the routine <em>xml_process</em>
+that takes three user-defined subroutines to perform the actual
+processing. The file will be processed in its entirety.
+
+<h2><a name="parameters_and_derived_types">PARAMETERS AND DERIVED TYPES</a></h2>
+<p>
+The module defines several parameters and derived types for use by the
+programmer:
+<dl>
+<dt>XML_BUFFER_LENGTH<dd>
+the length of the internal buffer, representing
+the maximum length of any individual line in an XML file and the maximum
+length for a tag including all its attributes.
+
+<br><br>
+<dt>XML_STDOUT<dd>
+a parameter to indicate the standard output (or *) as the file to
+write messages to.
+
+<br><br>
+<dt>type(XML_PARSE)<dd>
+the data structure that holds information about
+the XML file to be read or written. Its contents are partially
+accessible via functions such as XML_OK() and XML_ERROR().
+<em>Note:</em> do not use its contents directly, as these may change in
+future.
+
+</dl>
+
+<h2><a name="generating_a_reading_routine">GENERATING A READING ROUTINE</a></h2>
+<p>
+Reading an XML file and making sure the data are structured the way
+they are supposed to, generally requires a lot of code. This can not be
+avoided: you will want to make sure everything you need is there and
+anything else is dealt with appropriately.
+<p>
+There is a way out: by automatically generating the reading routine
+you can reduce the amount of manual coding to a minimum. This has two
+advantages:
+<ul>
+<li>
+It is much less work to define the data and their place in an XML file
+than it is to encode the reading routine.
+<br><br>
+<li>
+It is much less error-prone, if the logic is generated for you and
+therefore you need much less testing.
+</ul>
+The idea is simple:
+<p>
+In an XML-file you define the data structure and the way this data
+structure should appear in an input XML file for your program.
+The process is probably best explained via an example.
+<p>
+Say, you want to read addresses (a classical example). Each address
+consists of the name of the person, street name and the number of
+the house, city (let us keep it simple). Of course we have multiple
+addresses, so they are stored in an array. Then via the
+<em>xmlreader</em> program you can generate a reading routine that
+deals with this type of information.
+<p>
+The program takes an XML file as input and produces a Fortran 90 module
+that reads input files and stores the data in the designated variables.
+It also creates a writing routine to write the data to an XML file.
+<p>
+In our case, we want a derived type to hold the various pieces
+that form a complete address and we want an array of that type:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+&lt;typedef name=&quot;address_type&quot;&gt;
+   &lt;component name=&quot;person&quot; type=&quot;character&quot; length=&quot;40&quot;&gt;
+   &lt;component name=&quot;street&quot; type=&quot;character&quot; length=&quot;40&quot;&gt;
+   &lt;component name=&quot;number&quot; type=&quot;integer&quot;&gt;
+   &lt;component name=&quot;city&quot;   type=&quot;character&quot; length=&quot;40&quot;&gt;
+&lt;/typedef&gt;
+&lt;variable name=&quot;adress&quot; dimension=&quot;1&quot;&gt;
+</pre></td></tr></table></p>
+
+This will produce the following derived type:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+type address_type
+   character(len=40) :: person
+   character(len=40) :: street
+   integer           :: number
+   character(len=40) :: city
+end type address_type
+</pre></td></tr></table></p>
+and a variable &quot;address&quot;:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+type(address_type), dimension(:), pointer :: address
+</pre></td></tr></table></p>
+
+The reading routine will be able to read such XML files as the
+following:
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+&lt;address&gt;
+   &lt;person&gt;John Doe&lt;/person&gt;
+   &lt;street&gt;Wherever street&lt;/street&gt;
+   &lt;number&gt;30&lt;/number&gt;
+   &lt;city&gt;Erewhon&lt;/city&gt;
+&lt;/address&gt;
+&lt;address&gt;
+   ...
+&lt;/address&gt;
+...
+</pre></td></tr></table></p>
+If in some address the number was forgotten, the reading routine will
+report this, as by default all variables and components in a derived
+type must be present.
+
+<p>
+Here is a more detailed description of the XML files accepted by the
+<em>xmlreader</em> program:
+<ul>
+<li>
+Use the <em>comment</em> tag to insert comments in the input file to
+<em>reader</em> (or the input to the resulting reading routines)
+
+<br><br>
+<li>
+The <em>options</em> tag can be used to influence the generated code:
+<br><br>
+<ul>
+<li>
+The attribute &quot;strict&quot; determines whether unknown tags are
+regarded as an error (<em>strict=&quot;yes&quot;</em>) or not (<em>strict=&quot;no&quot;</em>,
+the default).
+<br><br>
+<li>
+The attribute &quot;globaltype&quot; is used to indicate that all variables should
+belong to a single derived type, whose name defaults to the name of the
+file. Use the &quot;typename&quot; attribute to set the name to a different value.
+</ul>
+
+<li>
+If you want to group tags for several variables, but you do not
+want to introduce a special derived type, you can do so with the
+<em>placeholder</em> tag. Its effect is to require an additional
+tag - end tag surrounding the data. Any tags defined within the
+placeholder - end placeholder tags will have to be put in the
+corresponding tags in the input file for the resulting program.
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+&lt;placeholder tag=&quot;grid&quot;&gt;
+    &lt;variable x ...&gt;
+    &lt;variable y ...&gt;
+&lt;/placeholder&gt;
+</pre></td></tr></table></p>
+
+<br><br>
+<li>
+<em>variable</em> tags correspond directly to module variables.
+They are used to declare these variables and to generate the code that will
+read them.
+<br><br>
+Variable tags can appear anywhere except within a type definition.
+Variables can be of a previously defined derived type or of a
+primitive type.
+<p><table><tr><td bgcolor=black>&nbsp;</td><td><pre class='sample'>
+&lt;variable name=&quot;x&quot; type=&quot;integer&quot; default=&quot;1&quot; /&gt;
+</pre></td></tr></table></p>
+Variables can have a number of attributes:
+<br><br>
+<ul>
+<li>
+Required attributes:
+<br><br>
+<dl>
+<i class='arg'>name</i> - the name of the variable in the actual program
+<br><br>
+<i class='arg'>type</i> - the type of the variable
+<br><br>
+<i class='arg'>length</i> - for character types only, the length of the string
+</dl>
+<br><br>
+
+<li>
+Optional attributes:
+<br><br>
+<dl>
+<i class='arg'>default</i> - the default value to be used if information is missing
+<br><br>
+<i class='arg'>dimension</i> - the number of dimensions (up to 3), gives rise to a
+pointer component
+<br><br>
+<i class='arg'>shape</i> - the fixed size of an array, if this is present, the
+number of dimensions is taken from this attribute.
+<br><br>
+<i class='arg'>tag</i> - the name of the tag that holds the data (default to
+the name of the variable)
+</dl>
+<br><br>
+
+<li>
+Basic types for the variables include:
+<br><br>
+<dl>
+<i class='arg'>integer</i> - a single integer value
+<br><br>
+<i class='arg'>integer-array</i> - a one-dimensional array of integer values (the
+values must appear between an opening and ending tag)
+<i class='arg'>real</i> - a single-precision real value
+<br><br>
+<i class='arg'>real-array</i> - a one-dimensional array of real values (the
+values must appear between an opening and ending tag)
+<br><br>
+<i class='arg'>double</i> - a double-precision real value
+<br><br>
+<i class='arg'>double-array</i> - a one-dimensional array of double-precision values
+(the values must appear between an opening and ending tag)
+<br><br>
+<i class='arg'>logical</i> - a single logical value (represented as &quot;T&quot; or &quot;F&quot;)
+<br><br>
+<i class='arg'>logical-array</i> - a one-dimensional array of logical values
+(the values must appear between an opening and ending tag)
+<br><br>
+<i class='arg'>word</i> - a character string as can be read via list-directed input
+(if it should contain spaces, surround it with single or double quotes)
+<br><br>
+<i class='arg'>word-array</i> - a one-dimensional array of strings
+(the values must appear between an opening and ending tag)
+<br><br>
+<i class='arg'>line</i> - a character string as can be read from a single line
+of text (via the '(A)' format)
+<br><br>
+<i class='arg'>line-array</i> - a one-dimensional array of strings, read as
+individual lines between the opening and closing tag
+<br><br>
+<i class='arg'>character</i> - a character string (synonym for &quot;line&quot;)
+<br><br>
+<i class='arg'>character-array</i> - a one-dimensional array of character strings,
+synonym for line-array
+</dl>
+</ul>
+<br><br>
+
+<li>
+Type definitions (<em>typedef</em>)allow the <em>xmlreader</em> program to
+define the derived types that you want to use in your reader.
+<br><br>
+The <em>typedef</em> tag may only contain <em>component</em> tags. They
+are synonym to <em>variable</em> tags with the same restrictions.
+
+</ul>
+
+<p>
+Future versions may also include options for:
+<ul>
+<li>
+Adding code to handle certain data in a particular way
+<br><br>
+<li>
+Version checking (so that an input file is explicitly identified
+as being of a particular version of the software)
+</ul>
+
+<h2><a name="examples">EXAMPLES</a></h2>
+<p>
+The directory &quot;examples&quot; contains some example programs.
+<ul>
+<li>
+The <em>tst_grid</em> program demonstrates how to create a reader
+for an array of &quot;grids&quot;, each consisting of two integers.
+<br><br>
+<li>
+The <em>tst_menu</em> program uses a more elaborate structure,
+a menubar with menus and each menu having an array of items.
+Items in a menu can have a submenu. This leads to an XML file with
+multiple hierarchical layers.
+<br><br>
+<li>
+The <em>tst_process</em> program uses the <em>xml_process</em> routine to
+read in an XML file (a &quot;docbook&quot; file) and turn it into an HTML file for
+viewing.
+</ul>
+
+
+<h2><a name="limitations">LIMITATIONS</a></h2>
+<p>
+Basic limitations:
+<ul>
+<li>
+The lines in the XML-file should not exceed 1000 characters. For tags
+that span more than one line, the limit holds for all the lines together
+(without leading or trailing blanks).
+
+<br><br>
+<li>
+There is no support for DTDs or namespaces, XSLT, XPath and
+other more advanced features around XML.
+
+<br><br>
+<li>
+There is currently no support for the object-oriented approach. It is up
+to the application to store the information that is needed, while the
+parsing is going on.
+
+<br><br>
+<li>
+No support (yet) for a single quote as delimiter
+
+<br><br>
+<li>
+No support (yet) for conversion of escape sequences (&amp;gt. for instance)
+
+<br><br>
+<li>
+The parser may not handle malformed XML-files properly
+
+<br><br>
+<li>
+The parser does not (yet) handle different line-endings properly (that
+is: reading XML-files that were written under MS Windows in a UNIX or
+Linux environment)
+
+</ul>
+
+<h2><a name="release_notes">RELEASE NOTES</a></h2>
+<p>
+This document belongs to <em>version 1.00</em> of the module.
+<p>
+History:
+<p>
+<em>version 0.1:</em> Proof of concept, august 2003
+<p>
+A very preliminary version meant to show that it is indeed possible to
+read and write XML files using Fortran only. It was published on the
+comp.lang.fortran newsgroup and generated enough interest to encourage
+further development.
+<p>
+<em>version 0.2:</em> First public release, august 2003
+<p>
+After some additional testing with practical XML-files, a number of bugs
+were found and solved, several enhancements were made:
+<ul>
+<li>
+Handling attributes (especially when tags span more than one line and
+correctly handling the case that too many attributes are present).
+<br><br>
+<li>
+Options for parsing and error handling added, as well as functions to
+check the status.
+<br><br>
+<li>
+Revision of the API, for more uniform names (prefix: xml_)
+<br><br>
+<li>
+Setting up the documentation (this document in particular)
+</ul>
+<p>
+<em>version 0.3:</em> Improvements, september 2003
+<ul>
+<li>
+Added the function xml_error()
+<br><br>
+<li>
+Implemented the report options
+<br><br>
+<li>
+Corrected a bug in xml_close (causing an infinite loop in the
+test program).
+<br><br>
+<li>
+Revised the test program to run through a number of test
+files.
+</ul>
+<p>
+<em>version 0.4:</em> Corrected xml_put(), october 2003
+<ul>
+<li>
+Adjusted the interface and implementation of the subroutine xml_put()
+It will now produce correct and reasonably looking XML files.
+<br><br>
+<li>
+Added a test program, tstwrite.f90, for this.
+</ul>
+
+<p>
+<em>version 0.9:</em> Added new approach, october 2005
+<ul>
+<li>
+Changes to the interface and implementation of the subroutine xml_put(),
+from a patch by <em>cinonet</em>.
+<br><br>
+<li>
+Added a program, xmlreader, to generate complete reading routines for
+particular XML files (<em>cf.</em> <a href="#generating_a_reading_routine">GENERATING A READING ROUTINE</a>
+</ul>
+
+<p>
+<em>version 0.94:</em> Gradually expanding the capabilities, june 2006
+<ul>
+<li>
+Added a routine <em>xml_process</em> that enables you to use an
+event-based approach like in the famous Expat library.
+<br><br>
+<li>
+Added the option <em>strict</em> and the tag <em>placeholder</em>.
+<br><br>
+<li>
+Corrected a number of bugs associated with the xmlreader program
+</ul>
+
+<p>
+<em>version 0.97:</em> Added the following capabilities to the
+xmlreader program since 0.94, june 2007
+<ul>
+<li>
+Support for the <em>shape</em> option
+<br><br>
+<li>
+Defaults for both components of a derived type and for
+independent variables.
+<br><br>
+<li>
+The generated reading routine takes care of elements that have
+attributes and character data now. The character data is treated as if
+it were an attribute with the name &quot;value&quot;
+<br><br>
+<li>
+Several bugs corrected in the xmlreader program
+</ul>
+
+<p>
+<em>version 1.00:</em> Added the following capabilities to the
+xmlreader program since 0.97, april 2008
+<ul>
+<li>
+Write a writing routine to write the data to a XML file
+</ul>
+The project now also contains a first version of a program to convert an
+XSD file to a file accepted by the xmlreader program. This is called
+&quot;xsdconvert&quot;.
+
+<h2><a name="to_do">TO DO</a></h2>
+<p>
+The following items remain on the &quot;to do&quot; list:
+<ul>
+<li>
+Adding checks for truncation of strings (attribute names/values too
+long, data lines too long; now only the number is checked).
+<br><br>
+<li>
+Documenting details about structures and parameters that may be of
+interest.
+</ul>
+
+
+
+<h2><a name="keywords">KEYWORDS</a></h2>
+<p>
+Fortran, XML, parsing
+</body></html>
+

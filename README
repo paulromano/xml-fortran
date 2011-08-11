@@ -1,0 +1,46 @@
+Parser for XML-files in Fortran:
+--------------------------------
+
+CONTENTS
+
+The directory structure is straightforward:
+
+README
+   This file
+CHANGES
+   Version and release information
+doc/
+   Contains the relevant documents describing how to use the parser module
+   and the xmlreader utility that can generate the source of a module
+   to read XML files with a particular structure.
+src/
+   Contains the sources and a simple makefile for creating the library
+   and test programs. Also contains the source for the xmlreader
+   utility that
+examples/
+   Contains example programs and input files
+lib/
+   After installation, contains the library and the module file, so
+   that other programs can use it
+
+
+INSTALLATION
+
+This depends on the compiler you use and the platform, but the following
+steps are required:
+
+1. Make the library and the module file via the makefile or something
+   equivalent:
+
+   > make
+
+2. Copy the library and the module file to a place where the compiler
+   will be able to find them. Within the limits of the simple makefile
+   that is delivered here, this should do the trick:
+
+   > make install
+
+Notes:
+Compilers vary in the naming convention for the module files. It is
+virtually impossible to support them all, so the makefile supports
+only a few of the possibilities.

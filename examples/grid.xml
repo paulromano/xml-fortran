@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<grid_definition>
+   <comment>
+   This is an example of a template for the xmlreader program:
+   The template defines (a part of) the data structure for the
+   program that will use the generated reader routines. The
+   xmlreader program can generate:
+   - the Fortran code to read the XML file containing the
+     actual data (this is put in a module)
+   - an example of an acceptable XML file, so that you can check
+     that all is as expected
+
+   Use the "comment" tag to insert comments in this template.
+
+   Additional comments:
+   - Extend with version information
+   - Options for treating unknown tags
+
+   </comment>
+
+   <options strict="yes" globaltype="no" rootname="grid_example"/>
+
+   <placeholder tag="general" optional="no">
+      <variable name="A" type="integer" default="12"></variable>
+      <variable name="B" type="integer"></variable>
+      <variable name="C" type="integer"></variable>
+   </placeholder>
+   <typedef name="grid_t">
+      <component name="X" type="integer" default="20"></component>
+      <component name="Y" type="integer"></component>
+   </typedef>
+   <comment>
+   The name of a variable can not be the same as that
+   of a derived type. So, make sure there are two
+   different names ...
+   </comment>
+   <variable name="grid" type="grid_t"></variable>
+   <variable name="grid_array" type="grid_t" dimension="1"></variable>
+</grid_definition>
