@@ -2,10 +2,6 @@
 #
 # Coarse test for the XML-Fortran module
 #
-# Note:
-# You may need to change the name of the Fortran compiler
-# and the compile options
-#
 
 FC = gfortran
 FCFLAGS = -c
