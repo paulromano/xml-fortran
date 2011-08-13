@@ -1,0 +1,5 @@
+# Compiler objects and modules
+examples/*.o
+examples/*.mod
+src/*.o
+src/*.mod
