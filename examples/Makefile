@@ -26,7 +26,7 @@ tst_readint: tst_readint.o readint.o ../src/xmlparse.a
 	$(FC) -o tst_readint tst_readint.o readint.o ../src/xmlparse.a
 
 tst_readint.o: tst_readint.f90 readint.o
-	$(FC) $(FCFLAGS) readint.f90
+	$(FC) $(FCFLAGS) tst_readint.f90
 
 readint.o: readint.f90
 	$(FC) $(FCFLAGS) readint.f90
@@ -35,3 +35,8 @@ readint.f90: readint.xml
 	echo readint > xmlreader.inp
 	../src/xmlreader
 	$(FC) $(FCFLAGS) readint.f90
+
+clean:
+	rm -f *.o
+	rm -f *.mod
+	rm -f *.a
