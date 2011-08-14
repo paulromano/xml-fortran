@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<examples>
-<example name="tst_menu.f90"> Define a menubar with nested menus
- Shows how to deal with arrays </example>
-<example name="tst_grid.f90" definition="grid.xml" input="grid_example.xml"> Conglomerate of options, nothing really structured
- - despite the name </example>
-</examples>
