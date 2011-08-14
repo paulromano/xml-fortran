@@ -42,6 +42,7 @@ program xmlreader
    integer                                :: luwrite
    integer                                :: luwritp
    integer                                :: luwrv
+   integer                                :: argc
    logical                                :: prolog_written
    logical                                :: comp
    logical                                :: error
@@ -117,12 +118,17 @@ program xmlreader
    ! Load the template into a tree and then generate it all
    ! in stages
    !
-   open( 10, file = 'xmlreader.inp' )
-   open( 20, file = 'xmlreader.out' )
+   argc = COMMAND_ARGUMENT_COUNT()
+   if (argc > 0) then
+      call GET_COMMAND_ARGUMENT(1, fname)
+   else
+      open(UNIT=10, FILE='xmlreader.inp')
+      read(UNIT=10, FMT='(a)') fname
+      close(UNIT=10)
+   end if
 
+   open( 20, file = 'xmlreader.out' )
    call xml_options( info, report_lun = 20, report_details = .true. )
-   read( 10, '(a)' ) fname
-   close( 10 )
 
    prolog_written = .false.
    !
