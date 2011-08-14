@@ -120,7 +120,7 @@ subroutine xml_report_details_int_( text, int )
    integer,          intent(in)     :: int
 
    if ( report_details_ ) then
-      if ( report_lun_ .eq. XML_STDOUT ) then
+      if ( report_lun_ == XML_STDOUT ) then
          write(*,*) trim(text), int
       else
          write(report_lun_,*) trim(text), int
@@ -139,7 +139,7 @@ subroutine xml_report_details_string_( text, string )
    character(len=*), intent(in)     :: string
 
    if ( report_details_ ) then
-      if ( report_lun_ .eq. XML_STDOUT ) then
+      if ( report_lun_ == XML_STDOUT ) then
          write(*,*) trim(text), ' ', trim(string)
       else
          write(report_lun_,*) trim(text), ' ', trim(string)
@@ -161,7 +161,7 @@ subroutine xml_report_errors_int_( text, int, lineno )
    integer, optional, intent(in)     :: lineno
 
    if ( report_errors_ .or. report_details_ ) then
-      if ( report_lun_ .eq. XML_STDOUT ) then
+      if ( report_lun_ == XML_STDOUT ) then
          write(*,*) trim(text), int
          if ( present(lineno) ) then
             write(*,*) '   At or near line', lineno
@@ -188,7 +188,7 @@ subroutine xml_report_errors_string_( text, string, lineno )
    integer, optional, intent(in)     :: lineno
 
    if ( report_errors_ .or. report_details_ ) then
-      if ( report_lun_ .eq. XML_STDOUT ) then
+      if ( report_lun_ == XML_STDOUT ) then
          write(*,*) trim(text), ' ', trim(string)
          if ( present(lineno) ) then
             write(*,*) '   At or near line', lineno
@@ -215,7 +215,7 @@ subroutine xml_report_errors_extern_( info, text )
    type(XML_PARSE),   intent(in)     :: info
    character(len=*),  intent(in)     :: text
 
-   if ( report_lun_ .eq. XML_STDOUT ) then
+   if ( report_lun_ == XML_STDOUT ) then
       write(*,*) trim(text), ' - at or near line', info%lineno
    else
       write(report_lun_,*) trim(text), ' - at or near line', info%lineno
@@ -270,17 +270,17 @@ subroutine xml_open( info, fname, mustread )
    enddo
    if ( .not. info%error .and. mustread ) then
       k = 1
-      do while ( k .ge. 1 )
+      do while ( k >= 1 )
          read( info%lun, '(a)', iostat = ierr ) info%line
-         if ( ierr .eq. 0 ) then
+         if ( ierr == 0 ) then
             info%line = adjustl(  info%line )
             k         = index( info%line, '<?' )
             !
             ! Assume (for now at least) that <?xml ... ?> appears on a single line!
             !
-            if ( k .ge. 1 ) then
+            if ( k >= 1 ) then
                kend = index( info%line, '?>' )
-               if ( kend .le. 0 ) then
+               if ( kend <= 0 ) then
                   call xml_report_errors( 'XML_OPEN: error reading file with LU-number: ', info%lun )
                   call xml_report_errors( 'Line starting with "<?xml" should end with "?>"', ' ' )
                   info%error = .true.
@@ -362,7 +362,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
    info%too_many_attribs = .false.
    info%too_many_data    = .false.
 
-   if ( info%lun .lt. 0 ) then
+   if ( info%lun < 0 ) then
       call xml_report_details( 'XML_GET on closed file ', ' ' )
       return
    endif
@@ -376,11 +376,11 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
    close_bracket = .false.
    kspace        = index( info%line, ' ' )
    kend          = index( info%line, '>' )
-   do while ( kend .le. 0 )
+   do while ( kend <= 0 )
       read( info%lun, '(a)', iostat = ierr ) nextline
       info%lineno = info%lineno + 1
 
-      if ( ierr .eq. 0 ) then
+      if ( ierr == 0 ) then
          info%line = trim(info%line) // ' ' // adjustl(nextline)
       else
          info%error = .true.
@@ -391,7 +391,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
       endif
       kend = index( info%line, '>' )
    enddo
-   if ( kend .gt. kspace ) then
+   if ( kend > kspace ) then
       kend = kspace
    else
       close_bracket = .true.
@@ -401,14 +401,14 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
    ! Check for the end of an ordianry tag and of
    ! a comment tag
    !
-   if ( info%line(1:3) .eq. '-->' ) then
+   if ( info%line(1:3) == '-->' ) then
       endtag = .true.
       tag    = info%line(4:kend-1)
-   else if ( info%line(1:2) .eq. '</' ) then
+   else if ( info%line(1:2) == '</' ) then
       endtag = .true.
       tag    = info%line(3:kend-1)
    else
-      if ( info%line(1:1) .eq. '<' ) then
+      if ( info%line(1:1) == '<' ) then
          tag    = info%line(2:kend-1)
          call xml_report_details( 'XML_GET - tag found: ', trim(tag) )
       else
@@ -421,26 +421,26 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
    idxat     = 0
    idxdat    = 0
 
-   if ( tag(1:3) .eq. '!--' ) comment_tag = .true.
+   if ( tag(1:3) == '!--' ) comment_tag = .true.
 
-   do while ( info%line .ne. ' ' .and. .not. close_bracket .and. .not. comment_tag )
+   do while ( info%line /= ' ' .and. .not. close_bracket .and. .not. comment_tag )
 
       keq  = index( info%line, '=' )
       kend = index( info%line, '>' )
-      if ( keq .gt. kend ) keq = 0 ! Guard against multiple tags
+      if ( keq > kend ) keq = 0 ! Guard against multiple tags
                                    ! with attributes on one line
 
       !
       ! No attributes any more?
       !
-      if ( keq .lt. 1 ) then
+      if ( keq < 1 ) then
          kend = index( info%line, '/>' )
-         if ( kend .ge. 1 ) then
+         if ( kend >= 1 ) then
             kend   = kend + 1 ! To go beyond the ">" character
             endtag = .true.
          else
             kend = index( info%line, '>' )
-            if ( kend .lt. 1 ) then
+            if ( kend < 1 ) then
                call xml_report_errors( 'XML_GET - wrong ending of tag ', &
                        trim(info%line), info%lineno  )
                info%error = .true. ! Wrong ending of line!
@@ -450,14 +450,14 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
                close_bracket = .true.
             endif
          endif
-         if ( kend .ge. 1 ) then
+         if ( kend >= 1 ) then
             info%line = adjustl( info%line(kend+1:) )
          endif
          exit
       endif
 
       idxat = idxat + 1
-      if ( idxat .le. size(attribs,2) ) then
+      if ( idxat <= size(attribs,2) ) then
          no_attribs = idxat
          attribs(1,idxat) = adjustl(info%line(1:keq-1)) ! Use adjustl() to avoid
                                                         ! multiple spaces, etc
@@ -467,7 +467,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
          ! We have almost found the start of the attribute's value
          !
          kfirst  = index( info%line, '"' )
-         if ( kfirst .lt. 1 ) then
+         if ( kfirst < 1 ) then
             call xml_report_errors( 'XML_GET - malformed attribute-value pair: ', &
                     trim(info%line), info%lineno  )
             info%error = .true. ! Wrong form of attribute-value pair
@@ -476,7 +476,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
          endif
 
          ksecond = index( info%line(kfirst+1:), '"' ) + kfirst
-         if ( ksecond .lt. 1 ) then
+         if ( ksecond < 1 ) then
             call xml_report_errors( 'XML_GET - malformed attribute-value pair: ', &
                     trim(info%line), info%lineno  )
             info%error = .true. ! Wrong form of attribute-value pair
@@ -488,7 +488,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
          info%line = adjustl( info%line(ksecond+1:) )
       endif
 
-      if ( idxat .gt. size(attribs,2) ) then
+      if ( idxat > size(attribs,2) ) then
          call xml_report_errors( 'XML_GET - more attributes than could be stored: ', &
                  trim(info%line), info%lineno  )
          info%too_many_attribs = .true.
@@ -511,9 +511,9 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
          kend   = index( info%line, '<' )
       endif
       idxdat = idxdat + 1
-      if ( idxdat .le. size(data) ) then
+      if ( idxdat <= size(data) ) then
          no_data = idxdat
-         if ( kend .ge. 1 ) then
+         if ( kend >= 1 ) then
             data(idxdat) = info%line(1:kend-1)
             info%line    = info%line(kend:)
          else
@@ -529,22 +529,22 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
       !
       ! No more data? Otherwise, read on
       !
-      if ( kend .ge. 1 ) then
+      if ( kend >= 1 ) then
          exit
       else
          read( info%lun, '(a)', iostat = ierr ) info%line
          info%lineno = info%lineno + 1
 
-         if ( ierr .lt. 0 ) then
+         if ( ierr < 0 ) then
             call xml_report_details( 'XML_GET - end of file found - LU-number: ', &
                     info%lun )
             info%eof = .true.
-         elseif ( ierr .gt. 0 ) then
+         elseif ( ierr > 0 ) then
             call xml_report_errors( 'XML_GET - error reading file with LU-number ', &
                     info%lun, info%lineno  )
             info%error = .true.
          endif
-         if ( ierr .ne. 0 ) then
+         if ( ierr /= 0 ) then
             exit
          endif
       endif
@@ -640,7 +640,7 @@ subroutine xml_put_open_tag_(info, tag, attribs, no_attribs, &
    write( info%lun, '(3a)', advance = 'no' ) &
          indent(1:3*info%level), '<', adjustl(tag)
    do i=1,no_attribs
-      if (attribs(2,i).ne.'') then
+      if (attribs(2,i)/='') then
          write( info%lun, '(5a)', advance = 'no' ) &
             ' ',trim(attribs(1,i)),'="', trim(attribs(2,i)),'"'
       endif
@@ -677,15 +677,15 @@ subroutine xml_put_element_(info, tag, attribs, no_attribs, &
 
    character(len=300), parameter :: indent = ' '
 
-   if ( (no_attribs.eq.0 .and. no_data.eq.0) ) then
+   if ( (no_attribs==0 .and. no_data==0) ) then
       return
    else
       logic = .true.
       do ii = 1,no_attribs
-         logic = logic .and. (attribs(2,ii).eq.'')
+         logic = logic .and. (attribs(2,ii)=='')
       enddo
       do ii = 1,no_data
-         logic = logic .and. (data(ii).eq.'')
+         logic = logic .and. (data(ii)=='')
       enddo
       if ( logic ) then
          return
@@ -693,15 +693,15 @@ subroutine xml_put_element_(info, tag, attribs, no_attribs, &
          write( info%lun, '(3a)', advance = 'no' ) &
              indent(1:3*info%level), '<', adjustl(tag)
          do i = 1,no_attribs
-            if (attribs(2,i).ne.'') then
+            if (attribs(2,i)/='') then
                write( info%lun, '(5a)', advance = 'no' ) &
                    ' ',trim(attribs(1,i)),'="', trim(attribs(2,i)),'"'
             endif
          enddo
-         if ( no_attribs.gt.0 .and. no_data.eq.0 ) then
+         if ( no_attribs>0 .and. no_data==0 ) then
             aa='a'
-         elseif ( (no_attribs.gt.0 .and. no_data.gt.0) .or. &
-                  (no_attribs.eq.0 .and. no_data.gt.0) ) then
+         elseif ( (no_attribs>0 .and. no_data>0) .or. &
+                  (no_attribs==0 .and. no_data>0) ) then
             aa='b'
          else
             write(*,*) no_attribs, no_data
@@ -769,7 +769,7 @@ subroutine xml_compress_( data, no_data )
    j     = 0
    empty = .true.
    do i = 1,no_data
-      if ( len_trim(data(i)) .ne. 0 .or. .not. empty ) then
+      if ( len_trim(data(i)) /= 0 .or. .not. empty ) then
          j       = j + 1
          data(j) = adjustl(data(i))
          empty = .false.
@@ -779,7 +779,7 @@ subroutine xml_compress_( data, no_data )
    no_data = j
 
    do i = no_data,1,-1
-      if ( len_trim(data(i)) .ne. 0 ) then
+      if ( len_trim(data(i)) /= 0 ) then
          exit
       else
          no_data = no_data - 1
@@ -812,7 +812,7 @@ subroutine xml_replace_entities_( data, no_data )
          do k = 1,size(entities,2)
             found = .false.
             pos   = index( data(i)(j:), trim(entities(2,k)) )
-            if ( pos .gt. 0 ) then
+            if ( pos > 0 ) then
                found = .true.
                j     = j + pos - 1
                j2    = j + len_trim(entities(2,k))
@@ -918,7 +918,7 @@ integer function xml_find_attrib( attribs, no_attribs, name, value )
 
    xml_find_attrib = -1
    do i = 1,no_attribs
-      if ( name .eq. attribs(1,i) ) then
+      if ( name == attribs(1,i) ) then
          value           = attribs(2,i)
          xml_find_attrib = i
          exit
@@ -995,7 +995,7 @@ subroutine xml_process( filename, attribs, data, startfunc, datafunc, endfunc, l
          exit
       endif
 
-      if ( .not. endtag .or. noattribs .ne. 0 ) then
+      if ( .not. endtag .or. noattribs /= 0 ) then
          call startfunc( tag, attribs(:,1:noattribs), error )
          if ( error ) exit
 

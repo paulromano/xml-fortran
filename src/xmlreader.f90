@@ -170,11 +170,11 @@ program xmlreader
       call xml_get( info, tag, endtag, attribs, noattribs, data, nodata )
       write(20,*) 'tag: ',tag
       write(20,*) 'attribs: ',noattribs
-      if ( noattribs .gt. 0 ) then
+      if ( noattribs > 0 ) then
          write(20,'(4a)') ( '   ', trim(attribs(1,i)), ' = ', trim(attribs(2,i)), i=1,noattribs )
       endif
       write(20,*) 'data: ',nodata
-      if ( nodata .gt. 0 ) then
+      if ( nodata > 0 ) then
          write(20,'(3a)') ( '   >', trim(data(i)), '<', i=1,nodata )
       endif
       if ( xml_error(info) ) then
@@ -187,7 +187,7 @@ program xmlreader
       ! When encountering the endtag, then close the
       ! current definition
       !
-      if ( endtag .and. noattribs .eq. 0 ) then
+      if ( endtag .and. noattribs == 0 ) then
          select case ( tag )
          case ( 'typedef' )
             call close_typedef( begin_component )
@@ -202,7 +202,7 @@ program xmlreader
             !
             ! Have we found the end of the definition?
             !
-            if ( tag .eq. starttag ) then
+            if ( tag == starttag ) then
                exit
             endif
          end select
@@ -352,7 +352,7 @@ subroutine get_global_options( attribs, noattribs, strict, global_type, global_n
        call xml_open( info, 'xmlreader.conf', .true. )
        do while ( xml_ok(info) )
           call xml_get( info, tag, endtag, attribs, noattribs, data, nodata )
-          if ( tag .eq. 'xmlreader' ) then
+          if ( tag == 'xmlreader' ) then
               call set_options( attribs, noattribs, strict, global_type, &
                                 global_name, root_name, dyn_strings )
           endif
@@ -486,7 +486,7 @@ subroutine append_files( lufirst )
       rewind( lu )
       do
          read( lu, '(a)', iostat=io ) line
-         if ( io .ne. 0 ) exit
+         if ( io /= 0 ) exit
          write( lusubs, '(a)' ) trim(line)
       enddo
       rewind( lu )
@@ -509,7 +509,7 @@ subroutine merge_files
    rewind( lusubs )
    do
       read( lusubs, '(a)', iostat=io ) line
-      if ( io .ne. 0 ) exit
+      if ( io /= 0 ) exit
       write( ludef, '(a)' ) trim(line)
    enddo
 
@@ -519,7 +519,7 @@ subroutine merge_files
    rewind( luwritp )
    do
       read( luwritp, '(a)', iostat=io ) line
-      if ( io .ne. 0 ) exit
+      if ( io /= 0 ) exit
       write( ludef, '(a)' ) trim(line)
    enddo
 
@@ -529,7 +529,7 @@ subroutine merge_files
    rewind( luinit )
    do
       read( luinit, '(a)', iostat=io ) line
-      if ( io .ne. 0 ) exit
+      if ( io /= 0 ) exit
       write( ludef, '(a)' ) trim(line)
    enddo
 end subroutine merge_files
@@ -599,9 +599,9 @@ subroutine write_prolog
       &   '   do', &
       &   '      call xml_get( info, starttag, endtag, attribs, noattribs, &', &
       &   '         data, nodata)', &
-      &   '      if ( starttag .ne. ''!--'' ) exit', &
+      &   '      if ( starttag /= ''!--'' ) exit', &
       &   '   enddo', &
-      &   '   if ( starttag .ne. "' // trim(root_name) // '" ) then', &
+      &   '   if ( starttag /= "' // trim(root_name) // '" ) then', &
       &   '      call xml_report_errors( info, &', &
       &   '         ''XML-file should have root element "' // trim(root_name) // '"'')', &
       &   '      error = .true.', &
@@ -638,12 +638,12 @@ subroutine add_begin_loop( checktag, component )
      &   '   noatt_ = noattribs+1' ,&
      &   '   endtag_org = endtag'  ,&
      &   '   do',  &
-     &   '      if ( nodata .ne. 0 ) then'           ,&
+     &   '      if ( nodata /= 0 ) then'           ,&
      &   '         noattribs = 0'                    ,&
      &   '         tag = starttag'                   ,&
-     &   '      elseif ( att_ .lt. noatt_ .and. noatt_ .gt. 1 ) then' ,&
+     &   '      elseif ( att_ < noatt_ .and. noatt_ > 1 ) then' ,&
      &   '         att_      = att_ + 1'             ,&
-     &   '         if ( att_ .le. noatt_-1 ) then'   ,&
+     &   '         if ( att_ <= noatt_-1 ) then'   ,&
      &   '            tag       = attribs(1,att_)'   ,&
      &   '            data(1)   = attribs(2,att_)'   ,&
      &   '            noattribs = 0'                 ,&
@@ -681,12 +681,12 @@ subroutine add_begin_loop( checktag, component )
    endif
    if ( checktag ) then
       write( luloop, '(a)' ) &
-  &   '      if ( endtag .and. tag .eq. starttag ) then'  ,&
+  &   '      if ( endtag .and. tag == starttag ) then'  ,&
   &   '         exit'                                     ,&
   &   '      endif'
    endif
    write( luloop, '(a)' ) &
-  &   '      if ( endtag .and. noattribs .eq. 0 ) then'   ,&
+  &   '      if ( endtag .and. noattribs == 0 ) then'   ,&
   &   '         if ( xml_ok(info) ) then'                 ,&
   &   '            cycle'                                 ,&
   &   '         else'                                     ,&
@@ -754,19 +754,19 @@ subroutine add_variable( component )
    idx2 = xml_find_attrib( attribs, noattribs, 'type', vartype )
    strlength = "--"
    idx5 = xml_find_attrib( attribs, noattribs, 'length', strlength )
-   if ( idx1 .le. 0 ) then
+   if ( idx1 <= 0 ) then
       write( 20, * ) 'Variable/component found which has no name'
       error = .true.
    endif
-   if ( idx2 .le. 0 ) then
+   if ( idx2 <= 0 ) then
       write( 20, * ) 'Variable/component found which has no type - ',trim(varname)
       error = .true.
    else
       dim  = '--'
       idx7 = xml_find_attrib( attribs, noattribs, 'dimension', dim )
       idx6 = xml_find_attrib( attribs, noattribs, 'shape', varshape )
-      if ( idx7 .ge. 1 ) then
-         if ( dim .eq. '1' ) then
+      if ( idx7 >= 1 ) then
+         if ( dim == '1' ) then
             idx3 = xml_find_attrib( types, notypes, vartype, declare )
             if ( idx3 > notypes_predefined ) then
                vartype = trim(vartype) // '-array'
@@ -778,7 +778,7 @@ subroutine add_variable( component )
             write(20,*) 'Dimension not supported: ',dim
          endif
       endif
-      if ( idx6 .ge. 1 ) then
+      if ( idx6 >= 1 ) then
          vartype = trim(vartype) // '-shape'
          vdim    = 1
          if ( index(varshape, ',') > 0 ) then
@@ -787,7 +787,7 @@ subroutine add_variable( component )
       endif
 
       idx3 = xml_find_attrib( types, notypes, vartype, declare )
-      if ( idx3 .le. 0 ) then
+      if ( idx3 <= 0 ) then
          write( 20, * ) &
             'Variable/component with unknown type - ',trim(varname)
          error = .true.
@@ -803,26 +803,26 @@ subroutine add_variable( component )
    endif
 
    idx1 = xml_find_attrib( attribs, noattribs, 'tag', vartag )
-   if ( idx1 .lt. 1 ) then
+   if ( idx1 < 1 ) then
       vartag = varname
    endif
 
    if ( .not. error ) then
-      if ( index( declare, "pointer" ) .gt. 0 ) then
+      if ( index( declare, "pointer" ) > 0 ) then
          initptr = " => null()"
       else
          initptr = ""
       endif
 
       k = index( declare, 'SHAPE' )
-      if ( k .gt. 0 ) then
+      if ( k > 0 ) then
           declare = declare(1:k-1) // trim(varshape) // declare(k+5:)
       endif
 
-      if ( index( declare, "?" ) .le. 0 ) then
+      if ( index( declare, "?" ) <= 0 ) then
          write( ludef,    '(4a)' ) declare,    ' :: ', trim(varname), trim(initptr)
       else
-         if ( strlength .eq. "--" ) then
+         if ( strlength == "--" ) then
              strlength = "1" ! Hm, error is better?
          endif
          idx5 = index( declare, "?" )
@@ -830,9 +830,9 @@ subroutine add_variable( component )
             ' :: ', trim(varname), trim(initptr)
       endif
 
-      if ( idx6 .gt. 0 ) then
+      if ( idx6 > 0 ) then
          k = index( types(2,idx3-1), '?' )
-         if ( k .le. 0 ) then
+         if ( k <= 0 ) then
             write( luprolog, '(3a)' ) types(2,idx3-1), ' :: ', 'p_'//trim(varname)
          else
             write( luprolog, '(6a)' ) types(2,idx3-1)(1:k-1), trim(strlength), &
@@ -841,12 +841,12 @@ subroutine add_variable( component )
       endif
       write( luprolog, '(3a)' ) types(2,1), ' :: ', 'has_'//trim(varname)
       write( lustart,  '(3a)' ) '   has_', varname, ' = .false.'
-      if ( dim .ne. '--' ) then
+      if ( dim /= '--' ) then
          write( lustart,  '(3a)' ) '   allocate(' // trim(varcomp), '(0))'
       endif
       write( luloop,   '(a)' ) '      case('''//trim(vartag)//''')'
 
-      if ( idx6 .le. 0 ) then
+      if ( idx6 <= 0 ) then
          write( luloop,   '(a)' ) &
             &'         call '//trim(types(3,idx3))//'( &', &
             &'            info, tag, endtag, attribs, noattribs, data, nodata, &',&
@@ -866,7 +866,7 @@ subroutine add_variable( component )
             &'            endif'
          else
              write( luloop,   '(a)' ) &
-            &'            if ( size(p_'//trim(varname)//') .ge. size('//trim(varcomp)//') ) then',&
+            &'            if ( size(p_'//trim(varname)//') >= size('//trim(varcomp)//') ) then',&
             &'               '//trim(varcomp)//' = reshape(p_'//trim(varname)//', shape('//trim(varcomp)//'))',&
             &'            else',&
             &'               has_'//trim(varname)//' = .false.',&
@@ -877,7 +877,7 @@ subroutine add_variable( component )
             &'            deallocate( p_'//trim(varname)//' )', &
             &'         endif'
       endif
-      if ( idx4 .le. 0 ) then
+      if ( idx4 <= 0 ) then
          write( luend,    '(a)' ) &
          &'   if ( .not. has_'//trim(varname)//' ) then'
 
@@ -937,7 +937,7 @@ subroutine add_typedef( strict, dyn_strings )
    character(len=32)                      :: typetag
 
    idx1 = xml_find_attrib( attribs, noattribs, 'name', typename )
-   if ( idx1 .le. 0 ) then
+   if ( idx1 <= 0 ) then
       write( 20, * ) 'Type definition found which has no name'
       error = .true.
    endif
@@ -948,7 +948,7 @@ subroutine add_typedef( strict, dyn_strings )
    call open_tmp_files( luprolog+notmps )
 
    idx2 = xml_find_attrib( attribs, noattribs, 'tag', typetag )
-   if ( idx1 .lt. 1 ) then
+   if ( idx1 < 1 ) then
       typetag = typename
    endif
 
@@ -1122,7 +1122,7 @@ subroutine add_placeholder( strict, dyn_strings )
    character(len=20)                      :: optional
 
    idx1 = xml_find_attrib( attribs, noattribs, 'tag', tag )
-   if ( idx1 .le. 0 ) then
+   if ( idx1 <= 0 ) then
       write( 20, * ) 'Placeholder definition found which has no tag name'
       error = .true.
    endif
@@ -1130,7 +1130,7 @@ subroutine add_placeholder( strict, dyn_strings )
    optional = 'no'
    idx2 = xml_find_attrib( attribs, noattribs, 'optional', optional )
 
-   if ( optional .eq. 'yes' ) then
+   if ( optional == 'yes' ) then
       if ( begin_loop ) then
          call add_begin_loop( .false., .false. )
       endif

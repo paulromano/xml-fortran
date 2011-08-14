@@ -68,7 +68,7 @@ subroutine skip_until_endtag( info, tag, attribs, data, error )
          error = .true.
          exit
       endif
-      if ( endtag .and. newtag .eq. tag ) then
+      if ( endtag .and. newtag == tag ) then
          exit
       endif
    enddo
@@ -132,12 +132,12 @@ subroutine read_xml_line( info, tag, endtag, attribs, noattribs, data, nodata, &
    !
    has_var = .false.
    idx = xml_find_attrib( attribs, noattribs, 'value', buffer )
-   if ( idx .gt. 0 ) then
+   if ( idx > 0 ) then
       var     = buffer
       has_var = .true.
    else
       do idx = 1,nodata
-         if ( data(idx) .ne. ' ' ) then
+         if ( data(idx) /= ' ' ) then
             var = data(idx)
             has_var = .true.
             exit
@@ -241,17 +241,17 @@ subroutine read_xml_line_array( info, tag, endtag, attribs, noattribs, data, &
    !
    has_var = .false.
    idx = xml_find_attrib( attribs, noattribs, 'values', buffer )
-   if ( idx .gt. 0 ) then
+   if ( idx > 0 ) then
       allocate( var(1:1) )
       var(1) = buffer
-      if ( buffer .ne. ' ' ) then
+      if ( buffer /= ' ' ) then
          has_var = .true.
       endif
    else
       idxv    = 0
       started = .false.
       do idx = 1,nodata
-         if ( data(idx) .ne. ' ' .or. started ) then
+         if ( data(idx) /= ' ' .or. started ) then
             if ( .not. started ) then
                allocate( var(1:nodata-idx+1) )
                started = .true.
