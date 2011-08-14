@@ -3,37 +3,50 @@
 # Coarse test for the XML-Fortran module
 #
 
-FC = gfortran
-FCFLAGS = -c
+#===============================================================================
+# Compiler Options
+#===============================================================================
 
-all: xmlparse.a tstparse xmlreader
+F90 = gfortran
+F90FLAGS = -g -fbacktrace
 
+#===============================================================================
+# Targets
+#===============================================================================
+
+all: xmlreader
+test: tstparse
 install:
 	mkdir -p ../lib
 	cp xmlparse.a ../lib
 	cp xmlparse.mod ../lib
+clean:
+	@rm -f *.o *.mod *.a xmlreader tstparse
+neat:
+	@rm -f *.o *.mod *.a
 
-xmlparse.a: xmlparse.o read_xml_prims.o write_xml_prims.o
-	ar r xmlparse.a xmlparse.o read_xml_prims.o write_xml_prims.o
+#===============================================================================
+# Rules
+#===============================================================================
 
-xmlparse.o: xmlparse.f90
-	$(FC) $(FCFLAGS) xmlparse.f90
+.SUFFIXES: .f90 .o
+.PHONY: all clean neat
 
-tstparse: tstparse.f90 xmlparse.a
-	$(FC) $(FCFLAGS) tstparse.f90
-	$(FC) -o tstparse tstparse.o xmlparse.a
+%.o: %.f90
+	$(F90) -c $(F90FLAGS) $<
 
-xmlreader: xmlreader.f90 xmlparse.a
-	$(FC) $(FCFLAGS) xmlreader.f90
-	$(FC) -o xmlreader xmlreader.o xmlparse.a
+#===============================================================================
+# Dependencies
+#===============================================================================
 
-read_xml_prims.o: read_xml_prims.f90 xmlparse.f90
-	$(FC) $(FCFLAGS) read_xml_prims.f90
+xmlparse.a: xmlparse.o read_xml_primitives.o write_xml_primitives.o
+	ar r xmlparse.a xmlparse.o read_xml_primitives.o write_xml_primitives.o
 
-write_xml_prims.o: write_xml_prims.f90 xmlparse.f90
-	$(FC) $(FCFLAGS) write_xml_prims.f90
+tstparse: tstparse.o xmlparse.a
+	$(F90) tstparse.o xmlparse.a -o $@
 
-clean:	
-	rm -f *.o
-	rm -f *.mod
-	rm -f *.a
+xmlreader: xmlreader.o xmlparse.a
+	$(F90) xmlreader.o xmlparse.a -o $@
+
+tstparse.o: xmlparse.o
+xmlreader.o: xmlparse.o
