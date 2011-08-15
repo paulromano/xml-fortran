@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<template>
+
+  <comment>
+    This is the template for reading geometry in OpenMC
+  </comment>
+
+  <options strict="yes" rootname="geometry" />
+
+  <typedef name="cell_xml">
+    <component name="uid" type="integer" />
+    <component name="universe" type="integer" default="0" />
+    <component name="material" type="integer" />
+    <component name="fill" type="integer" />
+    <component name="surface" type="integer-array" />
+  </typedef>
+
+  <typedef name="surface_xml">
+    <component name="uid" type="integer" />
+    <component name="type" type="word" />
+    <component name="values" type="integer-array" />
+  </typedef>
+
+  <variable name="cell" type="cell_xml" dimension="1" />
+  <variable name="surface" type="surface_xml" dimension="1" />
+</template>
