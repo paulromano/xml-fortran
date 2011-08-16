@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<template>
+
+  <options rootname="settings" />
+
+  <typedef name="xslibrary_xml">
+    <component name="path" type="word" length="250" />
+  </typedef>
+
+  <typedef name="criticality_xml">
+    <component name="cycles" type="integer" />
+    <component name="inactive" type="integer" />
+    <component name="particles" type="integer" />
+  </typedef>
+
+  <variable name="xslibrary" type="xslibrary_xml" />
+  <variable name="criticality" type="criticality_xml" />
+  <variable name="verbosity" type="integer" />
+
+</template>

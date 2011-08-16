@@ -6,8 +6,6 @@ program test_geometry
 
   call read_xml_file_geometry_t('geometry.xml')
 
-  print *, associated(cell(1) % surface)
-
   do i = 1, size(cell)
      print *, 'uid =', cell(i) % uid
      print *, 'universe = ', cell(i) % universe
