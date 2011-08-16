@@ -177,7 +177,7 @@ subroutine read_xml_word( info, tag, endtag, attribs, noattribs, data, nodata, &
                           var, has_var )
    character(len=*), intent(inout)       :: var
 
-   include 'read_xml_scalar.inc'
+   include 'read_xml_word.inc'
 
 end subroutine read_xml_word
 
