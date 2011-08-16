@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<template>
+
+  <options rootname="tallies" />
+
+  <typedef name="filter_xml">
+    <component name="region" type="word" length="250" />
+    <component name="bornin" type="word" length="250" />
+    <component name="energy" type="word" length="250" />
+    <component name="energyout" type="word" length="250" />
+    <component name="material" type="word" length="250" />
+    <component name="surface" type="word" length="250" />
+    <component name="mesh" type="word" length="250" />
+  </typedef>
+
+  <typedef name="tally_xml">
+    <component name="id" type="integer" />
+    <component name="filters" type="filter_xml" />
+    <component name="reactions" type="word" length="250" />
+    <component name="nuclides" type="word" length="250" />
+  </typedef>
+
+  <variable name="tally" type="tally_xml" dimension="1" />
+
+</template>
