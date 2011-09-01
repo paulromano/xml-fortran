@@ -15,7 +15,7 @@
 
   <typedef name="source_xml">
     <component name="type" type="word" length="10" />
-    <component name="coeffs" type="integer-array" />
+    <component name="coeffs" type="double-array" />
   </typedef>
 
   <variable name="xslibrary" type="xslibrary_xml" />

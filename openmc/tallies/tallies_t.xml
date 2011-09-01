@@ -20,6 +20,6 @@
     <component name="nuclides" type="word" length="250" />
   </typedef>
 
-  <variable name="tally" type="tally_xml" dimension="1" />
+  <variable name="tally_" tag="tally" type="tally_xml" dimension="1" />
 
 </template>

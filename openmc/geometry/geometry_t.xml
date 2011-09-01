@@ -22,7 +22,17 @@
     <component name="boundary" type="word" length="12" default="'transmit'" />
   </typedef>
 
+  <typedef name="lattice_xml">
+    <component name="uid" type="integer" />
+    <component name="type" type="word" length="12" />
+    <component name="dimension" type="integer-array" />
+    <component name="origin" type="double-array" />
+    <component name="width" type="double-array" />
+    <component name="universes" type="integer-array" />
+  </typedef>
+
   <variable name="cell_" tag="cell" type="cell_xml" dimension="1" />
   <variable name="surface_" tag="surface" type="surface_xml" dimension="1" />
+  <variable name="lattice_" tag="lattice" type="lattice_xml" dimension="1" />
 
 </template>

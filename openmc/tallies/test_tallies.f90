@@ -6,10 +6,10 @@ program test_tallies
 
   call read_xml_file_tallies_t('tallies.xml')
 
-  do i = 1, size(tally)
-     print *, "Tally ", tally(i) % id
-     print *, "Regions: ", trim(tally(i) % filters % region)
-     print *, "Energy: ", trim(tally(i) % filters % energy)
+  do i = 1, size(tally_)
+     print *, "Tally ", tally_(i) % id
+     print *, "Regions: ", trim(tally_(i) % filters % region)
+     print *, "Energy: ", trim(tally_(i) % filters % energy)
   end do
 
 end program test_tallies
