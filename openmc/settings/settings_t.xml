@@ -13,8 +13,14 @@
     <component name="particles" type="integer" />
   </typedef>
 
+  <typedef name="source_xml">
+    <component name="type" type="word" length="10" />
+    <component name="coeffs" type="integer-array" />
+  </typedef>
+
   <variable name="xslibrary" type="xslibrary_xml" />
   <variable name="criticality" type="criticality_xml" />
-  <variable name="verbosity" type="integer" />
+  <variable name="verbosity_" tag="verbosity" type="integer" />
+  <variable name="source_" tag="source" type="source_xml" />
 
 </template>

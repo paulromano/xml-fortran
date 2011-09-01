@@ -4,35 +4,38 @@
 <!-- Definition of Cells -->
   <cell uid="1">
     <universe>0</universe>
-    <material>37</material>
-    <surface>-2 3 4 -19</surface>
+    <fill>37</fill>
+    <surfaces>-2</surfaces>
   </cell>
   <cell uid="100">
     <universe>37</universe>
     <material>40</material>
-    <surface>-1</surface>
+    <surfaces>-1</surfaces>
   </cell>
   <cell uid="101">
     <universe>37</universe>
     <material>41</material>
-    <surface>1</surface>
+    <surfaces>1</surfaces>
   </cell>
   <cell uid="2">
     <universe>0</universe>
     <material>41</material>
-    <surface>2 -3</surface>
+    <surfaces>2 -3</surfaces>
   </cell>
 
 <!-- Defition of Surfaces -->
   <surface uid="1">
-    <cylinderz x="0" y="0" z="7" />
+    <type>cylinder-z</type>
+    <coeffs>0 0 7</coeffs>
   </surface>
   <surface uid="2">
-    <cylinderz x="0" y="0" z="9" />
+    <type>cylinder-z</type>
+    <coeffs>0 0 9</coeffs>
   </surface>
   <surface uid="3">
-    <cylinderz x="0" y="0" z="11" />
-    <vacuum />
+    <type>cylinder-z</type>
+    <coeffs>0 0 11</coeffs>
+    <boundary>vacuum</boundary>
   </surface>
     
 </geometry>

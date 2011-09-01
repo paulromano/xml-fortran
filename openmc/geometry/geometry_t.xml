@@ -10,17 +10,19 @@
   <typedef name="cell_xml">
     <component name="uid" type="integer" />
     <component name="universe" type="integer" default="0" />
-    <component name="material" type="integer" />
-    <component name="fill" type="integer" />
-    <component name="surface" type="integer-array" />
+    <component name="material" type="integer" default="0" />
+    <component name="fill" type="integer" default="0" />
+    <component name="surfaces" type="integer-array" />
   </typedef>
 
   <typedef name="surface_xml">
     <component name="uid" type="integer" />
-    <component name="type" type="word" />
-    <component name="values" type="integer-array" />
+    <component name="type" type="word" length="15" />
+    <component name="coeffs" type="double-array" />
+    <component name="boundary" type="word" length="12" default="'transmit'" />
   </typedef>
 
-  <variable name="cell" type="cell_xml" dimension="1" />
-  <variable name="surface" type="surface_xml" dimension="1" />
+  <variable name="cell_" tag="cell" type="cell_xml" dimension="1" />
+  <variable name="surface_" tag="surface" type="surface_xml" dimension="1" />
+
 </template>

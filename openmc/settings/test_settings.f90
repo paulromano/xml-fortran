@@ -8,6 +8,6 @@ program test_settings
   print *, "Cycles    = ", criticality % cycles
   print *, "Inactive  = ", criticality % inactive
   print *, "Particles = ", criticality % particles
-  print *, "Verbosity = ", verbosity
+  print *, "Verbosity = ", verbosity_
 
 end program test_settings
