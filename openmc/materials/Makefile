@@ -1,5 +1,5 @@
-program = test_material
-template = material_t
+program = test_materials
+template = materials_t
 objects = $(program).o $(template).o
 
 #===============================================================================

@@ -1,10 +1,10 @@
 program test_material
 
-  use xml_data_material_t
+  use xml_data_materials_t
 
   integer :: i, j, n, m
 
-  call read_xml_file_material_t('material.xml')
+  call read_xml_file_materials_t('material.xml')
 
   n = size(material_)
   do i = 1, n
