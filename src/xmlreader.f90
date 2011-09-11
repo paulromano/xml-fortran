@@ -24,7 +24,6 @@ program xmlreader
    character(len=200), dimension(1:100)   :: data
    integer                                :: nodata
    integer                                :: i
-   integer                                :: idx
    integer                                :: j
    integer, parameter                     :: notmps = 6 ! Number of temporary files needed!
    integer                                :: ludef
@@ -43,7 +42,6 @@ program xmlreader
    logical                                :: prolog_written
    logical                                :: comp
    logical                                :: error
-   logical                                :: contains = .false.
    logical                                :: begin_loop = .true.
    logical                                :: begin_main_loop = .true.
    logical                                :: begin_component = .false.
@@ -244,7 +242,7 @@ program xmlreader
             begin_main_loop = .false.
             call add_begin_loop( .true., .false. )
          endif
-         call add_placeholder(strict, dyn_strings )
+         call add_placeholder(dyn_strings)
          begin_component = .false.
          luwrv = luwrite
 
@@ -253,7 +251,7 @@ program xmlreader
              prolog_written = .true.
              call write_prolog
          endif
-         call add_typedef(strict, dyn_strings )
+         call add_typedef(dyn_strings)
 
       case( 'variable' )
          if ( .not. prolog_written ) then
@@ -939,12 +937,10 @@ end subroutine add_variable
 ! ADD_TYPEDEF --
 !    Routine to write the definition and other code for a derived type
 ! Arguments:
-!    strict          Whether checking for unknown flags is required
 !    dyn_strings     Whether dynamic string lengths are allowed
 !===============================================================================
 
-subroutine add_typedef( strict, dyn_strings )
-   logical, intent(in)                    :: strict
+subroutine add_typedef( dyn_strings )
    logical, intent(in)                    :: dyn_strings
 
    integer                                :: idx1
@@ -1127,12 +1123,10 @@ end subroutine close_typedef
 ! ADD_PLACEHOLDER --
 !    Routine to write the starting code fragments for a placeholder tag
 ! Arguments:
-!    strict          Whether checking for unknown flags is required
 !    dyn_strings     Whether dynamic string lengths are allowed
 !===============================================================================
 
-subroutine add_placeholder( strict, dyn_strings )
-   logical, intent(in)                    :: strict
+subroutine add_placeholder( dyn_strings )
    logical, intent(in)                    :: dyn_strings
 
    integer                                :: idx1
