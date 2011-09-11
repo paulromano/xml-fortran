@@ -1,17 +1,14 @@
-! -------------------------------------------------------------------
+!===============================================================================
 ! XMLREADER:
-! Read an XML-file that contains a template for the data and the XML
-! files that will be used in a program and generate a module with
-! reading routines.
-!
-! $Id: xmlreader.f90,v 1.22 2007/12/27 05:13:59 arjenmarkus Exp $
+!    Read an XML-file that contains a template for the data and the XML files
+!    that will be used in a program and generate a module with reading routines.
 !
 ! TODO:
 ! - Private routines!
 ! - Error for unknown data types
 ! - Length for character items
-! -------------------------------------------------------------------
-!
+!===============================================================================
+
 program xmlreader
    use XMLPARSE
    implicit none
@@ -63,9 +60,8 @@ program xmlreader
    character(len=50)                      :: declare
    character(len=50), dimension(:,:), pointer :: types
    character(len=50), dimension(:,:), pointer :: new_types
-!
-! TODO: arrays of integers etc, in addition to integer-arrays - see: word
-!
+   
+   ! TODO: arrays of integers etc, in addition to integer-arrays - see: word
    integer, parameter                     :: notypes_predefined = 27
    character(len=50), dimension(1:4,1:notypes_predefined) :: predefined_types
    integer                                :: notypes = notypes_predefined
@@ -231,11 +227,9 @@ program xmlreader
          endif
 
          if ( strict ) then
-            write( lumain, '(a)' ) &
-  &            '   strict_ = .true.'
+            write( lumain, '(a)' ) '   strict_ = .true.'
          else
-            write( lumain, '(a)' ) &
-  &            '   strict_ = .false.'
+            write( lumain, '(a)' ) '   strict_ = .false.'
          endif
 
       case( 'comment', '!--' )
@@ -321,7 +315,8 @@ program xmlreader
    stop
 contains
 
-! get_global_options --
+!===============================================================================
+! GET_GLOBAL_OPTIONS --
 !    Routine to get the global options from the configuration file
 ! Arguments:
 !    strict            Option to make the parser check for unknown tags
@@ -329,7 +324,8 @@ contains
 !    global_name       Name of that overall derived type (if requested)
 !    root_name         Name of the root element of the XML file
 !    dyn_strings       Whether to use dynamic strings or not
-!
+!===============================================================================
+
 subroutine get_global_options( attribs, noattribs, strict, global_type, global_name, &
                                root_name, dyn_strings )
    character(len=*), dimension(:,:), intent(inout) :: attribs
@@ -361,7 +357,8 @@ subroutine get_global_options( attribs, noattribs, strict, global_type, global_n
    endif
 end subroutine get_global_options
 
-! set_options --
+!===============================================================================
+! SET_OPTIONS --
 !    Routine to set the options that influence the parser
 ! Arguments:
 !    attribs           List of attributes
@@ -371,7 +368,8 @@ end subroutine get_global_options
 !    global_name       Name of that overall derived type (if requested)
 !    root_name         Name of the root element of the XML file
 !    dyn_strings       Whether to use dynamic strings or not
-!
+!===============================================================================
+
 subroutine set_options( attribs, noattribs, strict, global_type, global_name, root_name, dyn_strings )
    character(len=*), dimension(:,:), intent(in) :: attribs
    integer, intent(in)                          :: noattribs
@@ -413,11 +411,13 @@ subroutine set_options( attribs, noattribs, strict, global_type, global_name, ro
    enddo
 end subroutine set_options
 
-! open_tmp_files --
+!===============================================================================
+! OPEN_TMP_FILES --
 !    Routine to open the temporary files
 ! Arguments:
 !    lufirst           First LU-number to use
-!
+!===============================================================================
+
 subroutine open_tmp_files( lufirst )
    integer, intent(in) :: lufirst
 
@@ -435,11 +435,13 @@ subroutine open_tmp_files( lufirst )
    open( luwrite,  status = 'scratch' )
 end subroutine open_tmp_files
 
-! close_tmp_files --
+!===============================================================================
+! CLOSE_TMP_FILES --
 !    Routine to close the temporary files
 ! Arguments:
 !    None
-!
+!===============================================================================
+
 subroutine close_tmp_files
    close( luprolog )
    close( lustart  )
@@ -456,11 +458,13 @@ subroutine close_tmp_files
    luwrite  = luwrite  - notmps
 end subroutine close_tmp_files
 
-! append_tmp_files --
+!===============================================================================
+! APPEND_TMP_FILES --
 !    Routine to append the contents of the temporary files
 ! Arguments:
 !    lufirst           First LU-number to use
-!
+!===============================================================================
+
 subroutine append_files( lufirst )
    integer, intent(in) :: lufirst
 
@@ -493,11 +497,13 @@ subroutine append_files( lufirst )
    enddo
 end subroutine append_files
 
-! merge_files --
+!===============================================================================
+! MERGE_FILES --
 !    Routine to merge all temporary files into the definite file
 ! Arguments:
 !    None
-!
+!===============================================================================
+
 subroutine merge_files
 
    integer             :: io
@@ -534,11 +540,13 @@ subroutine merge_files
    enddo
 end subroutine merge_files
 
-! write_prolog --
+!===============================================================================
+! WRITE_PROLOG --
 !    Routine to write the beginning of the module
 ! Arguments:
 !    None
-!
+!===============================================================================
+
 subroutine write_prolog
    write( ludef, '(a)' ) &
   &   'module xml_data_' // trim(fname), &
@@ -612,13 +620,15 @@ subroutine write_prolog
    call add_end_loop
 end subroutine write_prolog
 
-! add_begin_loop --
+!===============================================================================
+! ADD_BEGIN_LOOP --
 !    Routine to write the start of the reading loop
 ! Arguments:
 !    checktag        Whether code for checking the tag is required
 !    component       Whether this is an ordinary variable or a component
 !                    in a derived type
-!
+!===============================================================================
+
 subroutine add_begin_loop( checktag, component )
    logical                                :: checktag
    logical                                :: component
@@ -696,11 +706,13 @@ subroutine add_begin_loop( checktag, component )
   &   '      select case( tag )'
 end subroutine add_begin_loop
 
-! add_end_loop --
+!===============================================================================
+! ADD_END_LOOP --
 !    Routine to write the end of the reading loop
 ! Arguments:
 !    None
-!
+!===============================================================================
+
 subroutine add_end_loop
 
    write( luend, '(a)' ) &
@@ -720,13 +732,15 @@ subroutine add_end_loop
   &   '   end do'
 end subroutine add_end_loop
 
-! add_variable --
+!===============================================================================
+! ADD_VARIABLE --
 !    Routine to write the definition of variables or components of
 !    derived types
 ! Arguments:
 !    component       Whether this is an ordinary variable or a component
 !                    in a derived type
-!
+!===============================================================================
+
 subroutine add_variable( component )
    logical                                :: component
 
@@ -921,12 +935,14 @@ subroutine add_variable( component )
 
 end subroutine add_variable
 
-! add_typedef --
+!===============================================================================
+! ADD_TYPEDEF --
 !    Routine to write the definition and other code for a derived type
 ! Arguments:
 !    strict          Whether checking for unknown flags is required
 !    dyn_strings     Whether dynamic string lengths are allowed
-!
+!===============================================================================
+
 subroutine add_typedef( strict, dyn_strings )
    logical, intent(in)                    :: strict
    logical, intent(in)                    :: dyn_strings
@@ -1081,11 +1097,13 @@ subroutine add_typedef( strict, dyn_strings )
    endif
 end subroutine add_typedef
 
-! close_typedef --
+!===============================================================================
+! CLOSE_TYPEDEF --
 !    Routine to write the last code fragments for a derived type
 ! Arguments:
 !    component       Turn off the "component" parameter
-!
+!===============================================================================
+
 subroutine close_typedef( component )
    logical, intent(out) :: component
 
@@ -1105,12 +1123,14 @@ subroutine close_typedef( component )
 
 end subroutine close_typedef
 
-! add_placeholder --
+!===============================================================================
+! ADD_PLACEHOLDER --
 !    Routine to write the starting code fragments for a placeholder tag
 ! Arguments:
 !    strict          Whether checking for unknown flags is required
 !    dyn_strings     Whether dynamic string lengths are allowed
-!
+!===============================================================================
+
 subroutine add_placeholder( strict, dyn_strings )
    logical, intent(in)                    :: strict
    logical, intent(in)                    :: dyn_strings
@@ -1197,11 +1217,13 @@ subroutine add_placeholder( strict, dyn_strings )
    endif
 end subroutine add_placeholder
 
-! close_placeholder --
+!===============================================================================
+! CLOSE_PLACEHOLDER --
 !    Routine to write the last code fragments for a placeholder
 ! Arguments:
 !    None
-!
+!===============================================================================
+
 subroutine close_placeholder
 
    write( luend, '(a)' ) &
