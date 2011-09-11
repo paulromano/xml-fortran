@@ -1,8 +1,5 @@
-! xmlparse.f90 - Simple, limited XML parser in Fortran
-!
-! $Id: xmlparse.f90,v 1.14 2007/12/07 10:10:19 arjenmarkus Exp $
-!
-! Arjen Markus
+!===============================================================================
+! XMLPARSE - Simple, limited XML parser in Fortran
 !
 ! General information:
 ! The module reads XML files by:
@@ -43,15 +40,18 @@
 !
 ! Further ideas:
 !   - simple checking via a table: parent, tag, id, min, max
-!
+!===============================================================================
+
 module xmlparse
 
    implicit none
 
    integer, parameter :: XML_BUFFER_LENGTH = 1000
-   !
-   ! Define the data type that holds the parser information
-   !
+
+!===============================================================================
+! XML_PARSE defines the data type that holds the parser information
+!===============================================================================
+
    type XML_PARSE
       integer          :: lun                ! LU-number of the XML-file
       integer          :: level              ! Indentation level (output)
@@ -65,33 +65,38 @@ module xmlparse
       character(len=XML_BUFFER_LENGTH) :: line  ! Buffer
    end type XML_PARSE
 
-   !
-   ! Global options
-   !
+!===============================================================================
+! Global options
+!===============================================================================
+
    integer, parameter    :: XML_STDOUT       = -1
    integer, private      :: report_lun_      = XML_STDOUT
    logical, private      :: report_errors_   = .false.
    logical, private      :: report_details_  = .false.
 
-   !
-   ! Global data (the ampersand must come first)
-   !
+!===============================================================================
+! Global data (the ampersand must come first)
+!===============================================================================
+
    character(len=10), dimension(2,3), save, private :: entities = &
       reshape( (/ '&    ', '&amp;', &
                   '>    ', '&gt; ',  &
                   '<    ', '&lt; ' /), (/2,3/) )
 
-   !
-   ! Auxiliary routines - private
+!===============================================================================
+! Auxiliary routines - private
+!===============================================================================
 
    private               :: xml_compress_
    private               :: xml_put_open_tag_
    private               :: xml_put_element_
    private               :: xml_put_close_tag_
    private               :: xml_replace_entities_
-   !
-   ! Interfaces to reporting routines
-   !
+
+!===============================================================================
+! Interfaces to reporting routines
+!===============================================================================
+
    private               :: xml_report_details_int_
    private               :: xml_report_details_string_
    private               :: xml_report_errors_int_
@@ -109,12 +114,14 @@ module xmlparse
 
 contains
 
-! xml_report_details_int_ --
+!===============================================================================
+! XML_REPORT_DETAILS_INT_ --
 !    Routine to write a text with an integer value
 ! Arguments:
 !    text        Text to be written
 !    int         Integer value to be added
-!
+!===============================================================================
+
 subroutine xml_report_details_int_( text, int )
    character(len=*), intent(in)     :: text
    integer,          intent(in)     :: int
@@ -128,12 +135,14 @@ subroutine xml_report_details_int_( text, int )
    endif
 end subroutine xml_report_details_int_
 
-! xml_report_details_string_ --
+!===============================================================================
+! XML_REPORT_DETAILS_STRING_ --
 !    Routine to write a text with a string value
 ! Arguments:
 !    text        Text to be written
 !    string      String to be added
-!
+!===============================================================================
+
 subroutine xml_report_details_string_( text, string )
    character(len=*), intent(in)     :: text
    character(len=*), intent(in)     :: string
@@ -147,14 +156,15 @@ subroutine xml_report_details_string_( text, string )
    endif
 end subroutine xml_report_details_string_
 
-
-! xml_report_errors_string_ --
+!===============================================================================
+! XML_REPORT_ERRORS_INT_ --
 !    Routine to write an error message text with an integer value
 ! Arguments:
 !    text        Text to be written
 !    int         Integer value to be added
 !    lineno      Line number in the file
-!
+!===============================================================================
+
 subroutine xml_report_errors_int_( text, int, lineno )
    character(len=*),  intent(in)     :: text
    integer,           intent(in)     :: int
@@ -175,13 +185,15 @@ subroutine xml_report_errors_int_( text, int, lineno )
    endif
 end subroutine xml_report_errors_int_
 
-! xml_report_errors_string_ --
+!===============================================================================
+! XML_REPORT_ERRORS_STRING_ --
 !    Routine to write an error message text with a string value
 ! Arguments:
 !    text        Text to be written
 !    string      String to be added
 !    lineno      Line number in the file
-!
+!===============================================================================
+
 subroutine xml_report_errors_string_( text, string, lineno )
    character(len=*),  intent(in)     :: text
    character(len=*),  intent(in)     :: string
@@ -202,7 +214,8 @@ subroutine xml_report_errors_string_( text, string, lineno )
    endif
 end subroutine xml_report_errors_string_
 
-! xml_report_errors_extern_ --
+!===============================================================================
+! XML_REPORT_ERRORS_EXTERN_ --
 !    Routine to write an error message text with a string value
 ! Arguments:
 !    info        Structure holding information on the XML-file
@@ -210,7 +223,8 @@ end subroutine xml_report_errors_string_
 ! Note:
 !    This routine is meant for use by routines outside
 !    this module
-!
+!===============================================================================
+
 subroutine xml_report_errors_extern_( info, text )
    type(XML_PARSE),   intent(in)     :: info
    character(len=*),  intent(in)     :: text
@@ -222,13 +236,15 @@ subroutine xml_report_errors_extern_( info, text )
    endif
 end subroutine xml_report_errors_extern_
 
-! xml_open --
+!===============================================================================
+! XML_OPEN --
 !    Routine to open an XML file for reading or writing
 ! Arguments:
 !    info        Structure holding information on the XML-file
 !    fname       Name of the file
 !    mustread    The file will be read (.true.) or written (.false.)
-!
+!===============================================================================
+
 subroutine xml_open( info, fname, mustread )
    character(len=*), intent(in)     :: fname
    logical,          intent(in)     :: mustread
@@ -301,11 +317,13 @@ subroutine xml_open( info, fname, mustread )
    endif
 end subroutine xml_open
 
-! xml_close --
+!===============================================================================
+! XML_CLOSE --
 !    Routine to close an XML file
 ! Arguments:
 !    info        Structure holding information on the XML-file
-!
+!===============================================================================
+
 subroutine xml_close( info )
    type(XML_PARSE),  intent(inout)    :: info
 
@@ -319,7 +337,8 @@ subroutine xml_close( info )
    info%lun              = -1
 end subroutine xml_close
 
-! xml_get --
+!===============================================================================
+! XML_GET --
 !    Routine to get the next bit of information from an XML file
 ! Arguments:
 !    info        Structure holding information on the XML-file
@@ -329,7 +348,8 @@ end subroutine xml_close
 !    no_attribs  Number of pairs in the list
 !    data        Lines of character data found
 !    no_data     Number of lines of character data
-!
+!===============================================================================
+
 subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
                    data, no_data )
    type(XML_PARSE),  intent(inout)               :: info
@@ -567,7 +587,8 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
 
 end subroutine xml_get
 
-! xml_put --
+!===============================================================================
+! XML_PUT --
 !    Routine to write a tag with the associated data to an XML file
 ! Arguments:
 !    info        Structure holding information on the XML-file
@@ -581,7 +602,8 @@ end subroutine xml_get
 !                open - just the opening tag with attributes
 !                elem - complete element
 !                close - just the closing tag
-!
+!===============================================================================
+
 subroutine xml_put(info, tag, attribs, no_attribs, &
                    data, no_data, type)
 
@@ -611,7 +633,8 @@ subroutine xml_put(info, tag, attribs, no_attribs, &
 
 end subroutine xml_put
 
-! xml_put_open_tag_ --
+!===============================================================================
+! XML_PUT_OPEN_TAG_ --
 !    Routine to write the opening tag with the attributes
 ! Arguments:
 !    info        Structure holding information on the XML-file
@@ -621,7 +644,8 @@ end subroutine xml_put
 !    no_attribs  Number of pairs in the list
 !    data        Lines of character data found
 !    no_data     Number of lines of character data
-!
+!===============================================================================
+
 subroutine xml_put_open_tag_(info, tag, attribs, no_attribs, &
                              data, no_data)
 
@@ -650,7 +674,8 @@ subroutine xml_put_open_tag_(info, tag, attribs, no_attribs, &
 
 end subroutine xml_put_open_tag_
 
-! xml_put_element_ --
+!===============================================================================
+! XML_PUT_ELEMENT_ --
 !    Routine to write the complete element
 ! Arguments:
 !    info        Structure holding information on the XML-file
@@ -660,7 +685,8 @@ end subroutine xml_put_open_tag_
 !    no_attribs  Number of pairs in the list
 !    data        Lines of character data found
 !    no_data     Number of lines of character data
-!
+!===============================================================================
+
 subroutine xml_put_element_(info, tag, attribs, no_attribs, &
                             data, no_data)
 
@@ -721,7 +747,8 @@ subroutine xml_put_element_(info, tag, attribs, no_attribs, &
 
 end subroutine xml_put_element_
 
-! xml_put_close_tag_ --
+!===============================================================================
+! XML_PUT_CLOSE_TAG_ --
 !    Routine to write the closing tag
 ! Arguments:
 !    info        Structure holding information on the XML-file
@@ -731,7 +758,8 @@ end subroutine xml_put_element_
 !    no_attribs  Number of pairs in the list
 !    data        Lines of character data found
 !    no_data     Number of lines of character data
-!
+!===============================================================================
+
 subroutine xml_put_close_tag_(info, tag, attribs, no_attribs, &
                      data, no_data)
 
@@ -752,12 +780,14 @@ subroutine xml_put_close_tag_(info, tag, attribs, no_attribs, &
 
 end subroutine xml_put_close_tag_
 
-! xml_compress_ --
+!===============================================================================
+! XML_COMPRESS_ --
 !    Routine to remove empty lines from the character data
 ! Arguments:
 !    data        Lines of character data found
 !    no_data     (Nett) number of lines of character data
-!
+!===============================================================================
+
 subroutine xml_compress_( data, no_data )
    character(len=*), intent(inout), dimension(:)    :: data
    integer,          intent(inout)                  :: no_data
@@ -788,13 +818,15 @@ subroutine xml_compress_( data, no_data )
 
 end subroutine xml_compress_
 
-! xml_replace_entities_ --
+!===============================================================================
+! XML_REPLACE_ENTITIES_ --
 !    Routine to replace entities such as &gt; by their
 !    proper character representation
 ! Arguments:
 !    data        Lines of character data found
 !    no_data     (Nett) number of lines of character data
-!
+!===============================================================================
+
 subroutine xml_replace_entities_( data, no_data )
    character(len=*), intent(inout), dimension(:)    :: data
    integer,          intent(inout)                  :: no_data
@@ -826,7 +858,8 @@ subroutine xml_replace_entities_( data, no_data )
 
 end subroutine xml_replace_entities_
 
-! xml_options --
+!===============================================================================
+! XML_OPTIONS --
 !    Routine to handle the parser options
 ! Arguments:
 !    info                Structure holding information on the XML-file
@@ -835,7 +868,8 @@ end subroutine xml_replace_entities_
 !    report_lun          LU-number for reporting information
 !    report_errors       Write messages about errors or not
 !    report_details      Write messages about all kinds of actions or not
-!
+!===============================================================================
+
 subroutine xml_options( info, ignore_whitespace, no_data_truncation, &
                         report_lun, report_errors, &
                         report_details )
@@ -864,13 +898,15 @@ subroutine xml_options( info, ignore_whitespace, no_data_truncation, &
    endif
 end subroutine xml_options
 
-! xml_ok --
+!===============================================================================
+! XML_OK --
 !    Function that returns whether all was okay or not
 ! Arguments:
 !    info                Structure holding information on the XML-file
 ! Returns:
 !    .true. if there was no error, .false. otherwise
-!
+!===============================================================================
+
 logical function xml_ok( info )
    type(XML_PARSE),  intent(in)               :: info
 
@@ -880,13 +916,15 @@ logical function xml_ok( info )
    xml_ok = .not. xml_ok
 end function xml_ok
 
-! xml_error --
+!===============================================================================
+! XML_ERROR --
 !    Function that returns whether there was an error
 ! Arguments:
 !    info                Structure holding information on the XML-file
 ! Returns:
 !    .true. if there was an error, .false. if there was none
-!
+!===============================================================================
+
 logical function xml_error( info )
    type(XML_PARSE),  intent(in)               :: info
 
@@ -895,18 +933,24 @@ logical function xml_error( info )
                  ( info%too_many_attribs .or. info%too_many_data ) )
 end function xml_error
 
-! xml_data_trunc --
+!===============================================================================
+! XML_DATA_TRUNC --
 !    Function that returns whether data were truncated or not
 ! Arguments:
 !    info                Structure holding information on the XML-file
 ! Returns:
 !    .true. if data were truncated, .false. otherwise
-!
+!===============================================================================
+
 logical function xml_data_trunc( info )
    type(XML_PARSE),  intent(in)               :: info
 
    xml_data_trunc = info%too_many_attribs .or. info%too_many_data
 end function xml_data_trunc
+
+!===============================================================================
+! XML_FIND_ATTRIB
+!===============================================================================
 
 integer function xml_find_attrib( attribs, no_attribs, name, value )
    character(len=*), dimension(:,:)  :: attribs
@@ -927,7 +971,8 @@ integer function xml_find_attrib( attribs, no_attribs, name, value )
 
 end function xml_find_attrib
 
-! xml_process --
+!===============================================================================
+! XML_PROCESS --
 !    Routine to read the XML file as a whole and distribute processing
 !    the contents over three user-defined subroutines
 ! Arguments:
@@ -941,7 +986,8 @@ end function xml_find_attrib
 ! Note:
 !    The routine is declared recursive to allow inclusion of XML files
 !    (common with XSD schemas). This extends to the auxiliary routines.
-!
+!===============================================================================
+
 recursive &
 subroutine xml_process( filename, attribs, data, startfunc, datafunc, endfunc, lunrep, error )
    character(len=*)                  :: filename
