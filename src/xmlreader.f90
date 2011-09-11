@@ -596,7 +596,7 @@ subroutine write_prolog
       &   '   ', &
       &   '   call init_xml_file_'//trim(fname), &
       &   '   call xml_open( info, fname, .true. )', &
-      &   '   call xml_options( info, report_errors=.true., ignore_whitespace=.true.)', &
+      &   '   call xml_options( info, report_errors=.false., ignore_whitespace=.true.)', &
       &   '   lurep_ = 0', &
       &   '   if ( present(lurep) ) then', &
       &   '      lurep_ = lurep', &
