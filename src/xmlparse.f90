@@ -619,20 +619,14 @@ subroutine xml_put(info, tag, attribs, no_attribs, &
    integer,          intent(in)                  :: no_data
    character(len=*)                              :: type
 
-   integer         :: i
-
-   character(len=300), parameter :: indent = ' '
-
    select case(type)
       case('open')
-         call xml_put_open_tag_(info, tag, attribs, no_attribs, &
-                  data, no_data)
+         call xml_put_open_tag_(info, tag, attribs, no_attribs)
       case('elem')
          call xml_put_element_(info, tag, attribs, no_attribs, &
                   data, no_data)
       case('close')
-         call xml_put_close_tag_(info, tag, attribs, no_attribs, &
-                  data, no_data)
+         call xml_put_close_tag_(info, tag)
    end select
 
 end subroutine xml_put
@@ -650,19 +644,14 @@ end subroutine xml_put
 !    no_data     Number of lines of character data
 !===============================================================================
 
-subroutine xml_put_open_tag_(info, tag, attribs, no_attribs, &
-                             data, no_data)
+subroutine xml_put_open_tag_(info, tag, attribs, no_attribs)
 
    type(XML_PARSE),  intent(inout)               :: info
    character(len=*), intent(in)                  :: tag
    character(len=*), intent(in), dimension(:,:)  :: attribs
    integer,          intent(in)                  :: no_attribs
-   character(len=*), intent(in), dimension(:)    :: data
-   integer,          intent(in)                  :: no_data
 
-   character(len=1)                              :: aa
    integer         :: i
-
    character(len=300), parameter :: indent = ' '
 
    write( info%lun, '(3a)', advance = 'no' ) &
@@ -740,14 +729,13 @@ subroutine xml_put_element_(info, tag, attribs, no_attribs, &
    endif
 
    select case(aa)
-      case('a')
-         write( info%lun, '(a)' ) '/>'
-      case('b')
-         write( info%lun, '(a)',advance='no' ) '>'
-         write( info%lun, '(2a)', advance='no') &
-               ( ' ', trim(data(i)), i=1,no_data )
-         write( info%lun, '(4a)' ) ' ','</', tag, '>'
-    end select
+   case('a')
+      write( info%lun, '(a)' ) '/>'
+   case('b')
+      write( info%lun, '(a)',advance='no' ) '>'
+      write( info%lun, '(2a)', advance='no') ( ' ', trim(data(i)), i=1,no_data )
+      write( info%lun, '(4a)' ) ' ','</', tag, '>'
+   end select
 
 end subroutine xml_put_element_
 
@@ -764,23 +752,15 @@ end subroutine xml_put_element_
 !    no_data     Number of lines of character data
 !===============================================================================
 
-subroutine xml_put_close_tag_(info, tag, attribs, no_attribs, &
-                     data, no_data)
+subroutine xml_put_close_tag_(info, tag)
 
-   type(XML_PARSE),  intent(inout)               :: info
-   character(len=*), intent(in)                  :: tag
-   character(len=*), intent(in), dimension(:,:)  :: attribs
-   integer,          intent(in)                  :: no_attribs
-   character(len=*), intent(in), dimension(:)    :: data
-   integer,          intent(in)                  :: no_data
-
-   integer         :: i
+   type(XML_PARSE),  intent(inout) :: info
+   character(len=*), intent(in)    :: tag
 
    character(len=300), parameter :: indent = ' '
 
-   info%level=info%level-1
-   write( info%lun, '(4a)' ) &
-        indent(1:3*info%level), '</', adjustl(tag), '>'
+   info%level = info%level - 1
+   write(info%lun, '(4a)') indent(1:3*info%level), '</', adjustl(tag), '>'
 
 end subroutine xml_put_close_tag_
 
