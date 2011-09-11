@@ -1,11 +1,9 @@
 <?xml version="1.0"?>
 <template>
 
-  <comment>
-    This is the template for reading geometry in OpenMC
-  </comment>
+  <!-- This is the template for reading geometry in OpenMC -->
 
-  <options strict="yes" rootname="geometry" />
+  <options rootname="geometry" />
 
   <typedef name="cell_xml">
     <component name="uid" type="integer" />
