@@ -92,6 +92,7 @@ module xmlparse
    private               :: xml_put_element_
    private               :: xml_put_close_tag_
    private               :: xml_replace_entities_
+   private               :: xml_remove_tabs_
 
 !===============================================================================
 ! Interfaces to reporting routines
@@ -288,6 +289,7 @@ subroutine xml_open( info, fname, mustread )
       k = 1
       do while ( k >= 1 )
          read( info%lun, '(a)', iostat = ierr ) info%line
+         call xml_remove_tabs_(info%line)
          if ( ierr == 0 ) then
             info%line = adjustl(  info%line )
             k         = index( info%line, '<?' )
@@ -398,6 +400,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
    kend          = index( info%line, '>' )
    do while ( kend <= 0 )
       read( info%lun, '(a)', iostat = ierr ) nextline
+      call xml_remove_tabs_(nextline)
       info%lineno = info%lineno + 1
 
       if ( ierr == 0 ) then
@@ -553,6 +556,7 @@ subroutine xml_get( info, tag, endtag, attribs, no_attribs, &
          exit
       else
          read( info%lun, '(a)', iostat = ierr ) info%line
+         call xml_remove_tabs_(info%line)
          info%lineno = info%lineno + 1
 
          if ( ierr < 0 ) then
@@ -1056,5 +1060,26 @@ subroutine xml_process( filename, attribs, data, startfunc, datafunc, endfunc, l
    enddo
    call xml_close( info )
 end subroutine xml_process
+
+!===============================================================================
+! XML_REMOVE_TABS_ --
+!    Routine to change any horizontal tab characters to spaces when reading a
+!    new line of data
+! Arguments:
+!    line        Line of character data to modify
+!===============================================================================
+
+subroutine xml_remove_tabs_(line)
+  character(len=*), intent(inout) :: line
+
+  integer :: i
+
+  do i = 1, len_trim(line)
+     if (line(i:i) == achar(9)) then
+        line(i:i) = ' '
+     end if
+  end do
+
+end subroutine xml_remove_tabs_
 
 end module xmlparse
