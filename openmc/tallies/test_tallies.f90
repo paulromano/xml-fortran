@@ -8,7 +8,7 @@ program test_tallies
 
   do i = 1, size(tally_)
      print *, "Tally ", tally_(i) % id
-     print *, "Regions: ", trim(tally_(i) % filters % region)
+     print *, "Cell: ", trim(tally_(i) % filters % cell)
      print *, "Energy: ", trim(tally_(i) % filters % energy)
   end do
 
