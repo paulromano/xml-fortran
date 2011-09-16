@@ -1,5 +1,13 @@
-# Compiler objects and modules
+# Compiler objects, modules, and executables
 examples/*.o
 examples/*.mod
 src/*.o
 src/*.mod
+src/libxmlparse.a
+src/xmlreader
+
+# Installed libraries
+lib/
+
+# Emacs backups
+*~
