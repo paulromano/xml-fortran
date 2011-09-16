@@ -4,22 +4,22 @@
   <options rootname="tallies" />
 
   <typedef name="filter_xml">
-    <component name="cell" type="word" length="250" />
-    <component name="surface" type="word" length="250" />
-    <component name="universe" type="word" length="250" />
-    <component name="material" type="word" length="250" />
-    <component name="mesh" type="word" length="250" />
-    <component name="bornin" type="word" length="250" />
-    <component name="energy" type="word" length="250" />
-    <component name="energyout" type="word" length="250" />
+    <component name="cell" type="word" length="250" default="''" />
+    <component name="surface" type="word" length="250" default="''" />
+    <component name="universe" type="word" length="250" default="''" />
+    <component name="material" type="word" length="250" default="''" />
+    <component name="mesh" type="word" length="250" default="''" />
+    <component name="bornin" type="word" length="250" default="''" />
+    <component name="energy" type="word" length="250" default="''" />
+    <component name="energyout" type="word" length="250" default="''" />
   </typedef>
 
   <typedef name="tally_xml">
     <component name="id" type="integer" />
     <component name="filters" type="filter_xml" />
-    <component name="macros" type="word" length="250" />
-    <component name="reactions" type="word" length="250" />
-    <component name="nuclides" type="word" length="250" />
+    <component name="macros" type="word" length="250" default="''" />
+    <component name="reactions" type="word" length="250" default="''" />
+    <component name="nuclides" type="word" length="250" default="''" />
   </typedef>
 
   <variable name="tally_" tag="tally" type="tally_xml" dimension="1" />
