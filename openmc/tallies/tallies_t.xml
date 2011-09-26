@@ -9,7 +9,7 @@
     <component name="universe" type="word" length="250" default="''" />
     <component name="material" type="word" length="250" default="''" />
     <component name="mesh" type="word" length="250" default="''" />
-    <component name="bornin" type="word" length="250" default="''" />
+    <component name="cellborn" type="word" length="250" default="''" />
     <component name="energy" type="word" length="250" default="''" />
     <component name="energyout" type="word" length="250" default="''" />
   </typedef>
